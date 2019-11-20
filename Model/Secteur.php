@@ -6,11 +6,7 @@ class Secteur
     private int $_id;
     private string $_varchar;
 
-    /**
-     * Secteur constructor.
-     * @param int $_id
-     * @param string $_varchar
-     */
+    //Penser à voir pour l'id
     public function __construct(string $_varchar)
     {
         $this->_varchar = $_varchar;
