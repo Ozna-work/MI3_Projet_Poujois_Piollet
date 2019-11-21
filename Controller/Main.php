@@ -4,7 +4,6 @@ require_once('../Model/db/PDO.php');
 
 function afficher_structures()
 {
-
     $structures = getAllStructures();
     echo "<table id='listeStructures'>";
 
@@ -43,6 +42,32 @@ function afficher_structures()
     }
 
     echo "</table>";
+}
+
+function afficher_secteurs() {
+    $secteurs = getAllSecteurs();
+
+
+    foreach ($secteurs as $secteur) {
+        echo "<tr>";
+        echo "<td>".$secteur[1]."</td>";
+        echo "</tr>";
+    }
+
+}
+
+function inserer_nouveaux_secteurs(string $libelle) {
+    $secteurs = getAllSecteurs();
+    $i = 0;
+    $secteurNonPresent = true;
+
+    while ($i<sizeof($secteurs) && $secteurNonPresent) {
+        $secteurNonPresent = $secteurs[$i][1] == $libelle;
+    }
+
+    if($secteurNonPresent){
+        //insert
+    }
 }
 
 ?>

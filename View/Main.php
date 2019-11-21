@@ -67,7 +67,25 @@
 </div>
 
 <div class="column">
-    AAAAAAAAAAAH
+    <form class="" method="post">
+
+        <table>
+            <tr>
+                <td>
+                    <label for="nom">Nouveau secteur:</label>
+                    <input id="nom" type="text" maxlength="100"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" value="Ajouter">
+                </td>
+            </tr>
+
+            <?php afficher_secteurs();?>
+
+        </table>
+    </form>
 </div>
 
 </body>

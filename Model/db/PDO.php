@@ -35,6 +35,26 @@ function getAllStructures(): array
     return array();
 }
 
+function getAllSecteurs() : array {
+    try {
+        $conn = getConnexion();
+        $stmt = $conn->prepare("select * from secteur");
+        $res = $stmt->execute();
+
+        if ($res) {
+            $lines = $stmt->fetchAll();
+            return $lines;
+        }
+    } catch (PDOException $e) {
+        echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
+    } finally {
+        // fermeture de la connexion
+        $conn = null;
+    }
+
+    return array();
+}
+
 function insertStructure(string $nom,string $rue, string $cp, string $ville, int $estasso, int $nb_don, int $nb_act)
 {
     try {
@@ -51,9 +71,25 @@ function insertStructure(string $nom,string $rue, string $cp, string $ville, int
         $res = $stmt->execute();
 
         if ($res) {
-            $stmt = $conn->prepare("INSERT INTO Secteurs_Structures(id_structure, id_secteur) VALUES ()");
+            //$stmt = $conn->prepare("INSERT INTO Secteurs_Structures(id_structure, id_secteur) VALUES ()");
         }
 
+
+    } catch (PDOException $e) {
+        echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
+    } finally {
+        // fermeture de la connexion
+        $conn = null;
+    }
+}
+
+function insertSecteur(string $libelle)
+{
+    try {
+        $conn = getConnexion();
+        $stmt = $conn->prepare("INSERT INTO Secteur(libelle) VALUES (:libelle)");
+        $stmt->bindValue("libelle",$libelle, PDO::PARAM_STR);
+        $stmt->execute();
 
     } catch (PDOException $e) {
         echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
