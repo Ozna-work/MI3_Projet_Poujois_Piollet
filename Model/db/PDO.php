@@ -55,18 +55,25 @@ function getAllSecteurs() : array {
     return array();
 }
 
-function insertStructure(string $nom,string $rue, string $cp, string $ville, int $estasso, int $nb_don, int $nb_act)
+function insertStructure(string $nom,string $rue, string $cp, string $ville, int $estasso, int $nb_donAct)
 {
     try {
         $conn = getConnexion();
         $stmt = $conn->prepare("INSERT INTO Structure(nom, rue, cp, ville, estasso, nb_donateurs, nb_actionnaires) VALUES (:nom,:rue,:cp,:ville,:estasso,:don,:act)");
-        $stmt->bindValue("nom",$nom, PDO::PARAM_STR);
-        $stmt->bindValue("nom",$rue, PDO::PARAM_STR);
-        $stmt->bindValue("nom",$cp, PDO::PARAM_STR);
-        $stmt->bindValue("nom",$ville, PDO::PARAM_STR);
-        $stmt->bindValue("nom",$estasso, PDO::PARAM_INT);
-        $stmt->bindValue("nom",$nb_don, PDO::PARAM_INT);
-        $stmt->bindValue("nom",$nb_act, PDO::PARAM_INT);
+        $stmt->bindValue("NOM",$nom, PDO::PARAM_STR);
+        $stmt->bindValue("RUE",$rue, PDO::PARAM_STR);
+        $stmt->bindValue("CP",$cp, PDO::PARAM_STR);
+        $stmt->bindValue("VILLE",$ville, PDO::PARAM_STR);
+        $stmt->bindValue("ESTASSO",$estasso, PDO::PARAM_INT);
+
+        //Si c'est une association
+        if($estasso == 1) {
+            $stmt->bindValue("NB_DONATEURS",$nb_donAct, PDO::PARAM_INT);
+            $stmt->bindValue("NB_ACTIONNAIRES",NULL, PDO::PARAM_NULL);
+        } else {
+            $stmt->bindValue("NB_DONATEURS",NULL, PDO::PARAM_NULL);
+            $stmt->bindValue("NB_ACTIONNAIRES",$nb_donAct, PDO::PARAM_INT);
+        }
 
         $res = $stmt->execute();
 
@@ -88,7 +95,7 @@ function insertSecteur(string $libelle)
     try {
         $conn = getConnexion();
         $stmt = $conn->prepare("INSERT INTO Secteur(libelle) VALUES (:libelle)");
-        $stmt->bindValue("libelle",$libelle, PDO::PARAM_STR);
+        $stmt->bindValue("LIBELLE",$libelle, PDO::PARAM_STR);
         $stmt->execute();
 
     } catch (PDOException $e) {
