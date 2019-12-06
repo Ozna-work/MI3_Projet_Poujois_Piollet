@@ -1,23 +1,28 @@
 <?php
 
-include_once ('../Controller/Main.php');
+include_once('../Controller/Main.php');
 
 session_start();
-if (isset($_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct'])) {
+if (isset($_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct'],$_POST['check_list'])) {
     $_SESSION['nomStructure'] = $_POST['nomStructure'];
     $_SESSION['rue'] = $_POST['rue'];
     $_SESSION['cp'] = $_POST['cp'];
     $_SESSION['ville'] = $_POST['ville'];
     $_SESSION['structure'] = $_POST['structure'];
     $_SESSION['nbDonaAct'] = $_POST['nbDonaAct'];
+    //todo Faire la sauvegarde des checkboxs en session
 
-    inserer_nouvelles_structures($_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct']);
+    inserer_nouvelles_structures($_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct'],$_POST['check_list']);
 }
 
 if (isset($_POST['nomSecteur'])) {
     $_SESSION['nomSecteur'] = $_POST['nomSecteur'];
 
     inserer_nouveaux_secteurs($_POST['nomSecteur']);
+}
+
+if (isset($_POST['idSuppression'])) {
+    supprimer_structure($_POST['idSuppression']);
 }
 ?>
 
@@ -80,6 +85,12 @@ if (isset($_POST['nomSecteur'])) {
                     <label for="nbDonaAct">Nombre de donnateurs/actionnaires:</label></br>
                     <input required id="nbDonaAct" name="nbDonaAct" type="number" maxlength="11"
                            value="<?php if (isset($_SESSION['nbDonaAct'])) echo htmlspecialchars($_SESSION['nbDonaAct']); ?>"/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <?php afficher_chechbox_secteurs()?>
                 </td>
             </tr>
             <tr>
