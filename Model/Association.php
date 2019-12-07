@@ -23,7 +23,4 @@ class Association extends Structure
     }
 
 
-
-
-
 }

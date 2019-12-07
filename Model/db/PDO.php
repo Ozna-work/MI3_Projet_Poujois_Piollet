@@ -87,9 +87,10 @@ function insertStructure(string $nom, string $rue, string $cp, string $ville, in
     } catch (PDOException $e) {
         echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
     } finally {
+        //var_dump($conn ->lastInsertId());
+        return $conn->lastInsertId();
         // fermeture de la connexion
         $conn = null;
-        return getLastInsertId();
 
     }
 }
@@ -99,7 +100,7 @@ function insertLinkSecteursStructure(int $idStructure, int $idSecteur)
     try {
         $conn = getConnexion();
 
-        $stmt_link = $conn->prepare("INSERT INTO Secteurs_Structures(id_structure, id_secteur) VALUES (:idStructure, :idSecteur)");
+        $stmt_link = $conn->prepare("INSERT INTO Secteurs_Structures(ID_STRUCTURE, ID_SECTEUR) VALUES (:idStructure, :idSecteur)");
         $stmt_link->bindValue("idStructure", $idStructure, PDO::PARAM_INT);
         $stmt_link->bindValue("idSecteur", $idSecteur, PDO::PARAM_INT);
 

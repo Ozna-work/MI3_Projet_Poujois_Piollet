@@ -84,7 +84,7 @@ function inserer_nouveaux_secteurs(string $libelle)
 
 function inserer_nouvelles_structures(string $nom, string $rue, string $cp, string $ville, string $structure, string $nbDonAct, $checkbox_list)
 {
-    if($checkbox_list) {
+    if ($checkbox_list) {
         $i = 0;
         $structures = getAllStructures();
         $structurePresent = false;
@@ -106,8 +106,9 @@ function inserer_nouvelles_structures(string $nom, string $rue, string $cp, stri
         if (!$structurePresent) {
             $idStructure = insertStructure($nom, $rue, $cp, $ville, $estAsso, $nbDonAct);
 
-            var_dump($checkbox_list); //UNE CHECKBOX RENVOIE SON ATTRIBU VALUE ("ON" SI VIDE)
+            //$checkbox est un string
             foreach ($checkbox_list as $checkbox) {
+                var_dump($checkbox);
                 insertLinkSecteursStructure((int)$idStructure, (int)$checkbox);
             }
         }
@@ -132,15 +133,20 @@ function supprimer_structure(int $id)
     }
 }
 
-function afficher_chechbox_secteurs()
+function afficher_checkbox_secteurs($checklist)
 {
     $secteurs = getAllSecteurs();
 
+    for ($i = 0; $i < sizeof($secteurs); $i++) {
+        $id = $secteurs[$i][0] + 1;
 
-    foreach ($secteurs as $secteur) {
         echo "<tr>";
-        echo '<td> <input type="checkbox" id="' . $secteur[0] . '" name="check_list[]"/>';
-        echo '<label for="' . $secteur[0] . '">' . $secteur[1] . '</label>';
+        echo '<td> <input type="checkbox" id="' . $id . '" name="check_list[]" value="' . $id . '"';
+        if (in_array($i, $checklist)) {
+            echo ' checked="checked" ';
+        }
+        echo '/>';
+        echo '<label for="' . $secteurs[$i][0] . '">' . $secteurs[$i][1] . '</label>';
         echo "</td>";
         echo "</tr>";
     }
