@@ -35,6 +35,26 @@ function getAllStructures(): array
     return array();
 }
 
+function getStructureById($id)
+{
+    try {
+        $conn = getConnexion();
+        $stmt = $conn->prepare("select * from structure where id= :id");
+        $stmt->bindValue("id", $id, PDO::PARAM_INT);
+        $res = $stmt->execute();
+
+        if ($res) {
+            return $stmt->fetchAll();
+        }
+
+    } catch (PDOException $e) {
+        echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
+    } finally {
+        // fermeture de la connexion
+        $conn = null;
+    }
+}
+
 function getAllSecteurs(): array
 {
     try {
@@ -56,11 +76,11 @@ function getAllSecteurs(): array
     return array();
 }
 
-function getStructureById($id)
+function getSecteursIdByStructureId($id)
 {
     try {
         $conn = getConnexion();
-        $stmt = $conn->prepare("select * from structure where id= :id");
+        $stmt = $conn->prepare("select id from secteur where id IN(select id_secteur from secteurs_structures where id_structure = :id)");
         $stmt->bindValue("id", $id, PDO::PARAM_INT);
         $res = $stmt->execute();
 
@@ -75,6 +95,7 @@ function getStructureById($id)
         $conn = null;
     }
 }
+
 
 function getLastInsertId()
 {

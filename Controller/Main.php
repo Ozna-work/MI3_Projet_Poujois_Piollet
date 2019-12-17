@@ -163,4 +163,14 @@ function recuperer_structure_par_id(int $id)
     return getStructureById($id);
 }
 
+function recuperer_idSecteurs_par_idStructure(int $id)
+{
+    $secteurs = getSecteursIdByStructureId($id);
+    $res = [];
+
+    for($i = 0; $i<sizeof($secteurs);$i++) {
+        $res[$i] = $secteurs[$i][0];
+    }
+    return $res;
+}
 ?>

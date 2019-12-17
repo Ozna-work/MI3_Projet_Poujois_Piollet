@@ -3,7 +3,6 @@
 include_once('../Controller/Main.php');
 
 session_start();
-setcookie('structureAModifier', null, time() - 1);
 
 if (isset($_POST['idModifier'])) {
     echo $_POST['idModifier'];
@@ -33,14 +32,8 @@ if (isset($_POST['idSuppression'])) {
 
 if (isset($_POST['idModifier'])) {
     $time = time() + 3600;
-    $struct = recuperer_structure_par_id($_POST['idModifier'])[0];
-    setcookie('nomModifier', $struct[1], $time); //struct[1] = nom
-    setcookie('rueModifier', $struct[2], $time); //struct[2] = rue
-    setcookie('cpModifier', $struct[3], $time); //struct[3] = cp
-    setcookie('villeModifier', $struct[4], $time); //struct[4] = ville
-    setcookie('estAssoModifier', $struct[5], $time); //struct[5] = estasso
-    setcookie('nbContributeurModifier', $struct[6] + $struct[7], $time); //struct[6] = nb_donateurs et struct[7] = nb_actionnaires
-
+    $structAModifier = recuperer_structure_par_id($_POST['idModifier'])[0];
+    $secteursAModifier = recuperer_idSecteurs_par_idStructure($_POST['idModifier']);
 }
 ?>
 
@@ -63,8 +56,8 @@ if (isset($_POST['idModifier'])) {
                     <label for="nomStructure">Nom:</label>
                     <input required id="nomStructure" name="nomStructure" type="text" maxlength="100"
                            value="<?php
-                           if (isset($_COOKIE['nomModifier'])) {
-                               echo htmlspecialchars($_COOKIE['nomModifier']);
+                           if (isset($structAModifier[1])) {
+                               echo htmlspecialchars($structAModifier[1]);
                            } else if (isset($_SESSION['nomStructure'])) {
                                echo htmlspecialchars($_SESSION['nomStructure']);
                            } ?>"/>
@@ -75,8 +68,8 @@ if (isset($_POST['idModifier'])) {
                     <label for="rue">Rue:</label>
                     <input required id="rue" name="rue" type="text" maxlength="200"
                            value="<?php
-                           if (isset($_COOKIE['rueModifier'])) {
-                               echo htmlspecialchars($_COOKIE['rueModifier']);
+                           if (isset($structAModifier[2])) {
+                               echo htmlspecialchars($structAModifier[2]);
                            } else if (isset($_SESSION['rue'])) {
                                echo htmlspecialchars($_SESSION['rue']);
                            } ?>"/>
@@ -87,8 +80,8 @@ if (isset($_POST['idModifier'])) {
                     <label for="cp">Code postal:</label>
                     <input required id="cp" name="cp" type="number" maxlength="5"
                            value="<?php
-                           if (isset($_COOKIE['cpModifier'])) {
-                               echo htmlspecialchars($_COOKIE['cpModifier']);
+                           if (isset($structAModifier[3])) {
+                               echo htmlspecialchars($structAModifier[3]);
                            } else if (isset($_SESSION['cp'])) {
                                echo htmlspecialchars($_SESSION['cp']);
                            } ?>"/>
@@ -99,8 +92,8 @@ if (isset($_POST['idModifier'])) {
                     <label for="ville">Ville:</label>
                     <input required id="ville" name="ville" type="text" maxlength="100"
                            value="<?php
-                           if (isset($_COOKIE['villeModifier'])) {
-                               echo htmlspecialchars($_COOKIE['villeModifier']);
+                           if (isset($structAModifier[4])) {
+                               echo htmlspecialchars($structAModifier[4]);
                            } else if (isset($_SESSION['ville'])) {
                                echo htmlspecialchars($_SESSION['ville']);
                            } ?>"/>
@@ -111,14 +104,14 @@ if (isset($_POST['idModifier'])) {
                     <label for="structure">Type de structure:</label>
                     <select name="structure" size="1" id="structure">
                         <option value="association" <?php
-                        if (isset($_COOKIE['estAssoModifier']) && $_COOKIE['estAssoModifier']) {
+                        if (isset($structAModifier[5]) && $structAModifier[5]==1) {
                             echo "selected";
                         } else if (isset($_SESSION['structure']) && $_SESSION['structure'] == "association") {
                             echo "selected";
                         } ?>
                             ">Association
                             <option value="entreprise" <?php
-                        if (isset($_COOKIE['estAssoModifier']) && !$_COOKIE['estAssoModifier']) {
+                        if (isset($structAModifier[5]) && $structAModifier[5]==0) {
                             echo "selected";
                         } else if (isset($_SESSION['structure']) && $_SESSION['structure'] == "entreprise") {
                             echo "selected";
@@ -131,8 +124,8 @@ if (isset($_POST['idModifier'])) {
                 <td>
                     <label for="nbDonaAct">Nombre de donnateurs/actionnaires:</label></br>
                     <input required id="nbDonaAct" name="nbDonaAct" type="number" maxlength="11"
-                           value="<?php if (isset($_COOKIE['nbContributeurModifier'])) {
-                               echo htmlspecialchars($_COOKIE['nbContributeurModifier']);
+                           value="<?php if (isset($structAModifier[6]) || isset($structAModifier[7])) {
+                               echo htmlspecialchars($structAModifier[6]+$structAModifier[7]);
                            } else if (isset($_SESSION['nbDonaAct'])) {
                                echo htmlspecialchars($_SESSION['nbDonaAct']);
                            } ?>"/>
@@ -141,7 +134,12 @@ if (isset($_POST['idModifier'])) {
 
             <tr>
                 <td>
-                    <?php if (isset($_SESSION['check_list'])) {
+                    <?php if (isset($secteursAModifier)) {
+//                        var_dump('ONPASSEICI');
+//                        var_dump($secteursAModifier);
+                        afficher_checkbox_secteurs($secteursAModifier);
+                    }
+                    else if(isset($_SESSION['check_list'])) {
                     afficher_checkbox_secteurs($_SESSION['check_list']);
                     } else {
                     afficher_checkbox_secteurs(null);
