@@ -20,6 +20,10 @@ if (isset($_POST['submit'], $_POST['nomStructure'], $_POST['rue'], $_POST['cp'],
     inserer_nouvelles_structures($_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct'], $_POST['check_list']);
 }
 
+if (isset($_POST['modifier'], $_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct'], $_POST['check_list'])) {
+
+}
+
 if (isset($_POST['nomSecteur'])) {
     $_SESSION['nomSecteur'] = $_POST['nomSecteur'];
 
@@ -104,14 +108,14 @@ if (isset($_POST['idModifier'])) {
                     <label for="structure">Type de structure:</label>
                     <select name="structure" size="1" id="structure">
                         <option value="association" <?php
-                        if (isset($structAModifier[5]) && $structAModifier[5]==1) {
+                        if (isset($structAModifier[5]) && $structAModifier[5] == 1) {
                             echo "selected";
                         } else if (isset($_SESSION['structure']) && $_SESSION['structure'] == "association") {
                             echo "selected";
                         } ?>
-                            ">Association
-                            <option value="entreprise" <?php
-                        if (isset($structAModifier[5]) && $structAModifier[5]==0) {
+                        ">Association
+                        <option value="entreprise" <?php
+                        if (isset($structAModifier[5]) && $structAModifier[5] == 0) {
                             echo "selected";
                         } else if (isset($_SESSION['structure']) && $_SESSION['structure'] == "entreprise") {
                             echo "selected";
@@ -125,7 +129,7 @@ if (isset($_POST['idModifier'])) {
                     <label for="nbDonaAct">Nombre de donnateurs/actionnaires:</label></br>
                     <input required id="nbDonaAct" name="nbDonaAct" type="number" maxlength="11"
                            value="<?php if (isset($structAModifier[6]) || isset($structAModifier[7])) {
-                               echo htmlspecialchars($structAModifier[6]+$structAModifier[7]);
+                               echo htmlspecialchars($structAModifier[6] + $structAModifier[7]);
                            } else if (isset($_SESSION['nbDonaAct'])) {
                                echo htmlspecialchars($_SESSION['nbDonaAct']);
                            } ?>"/>
@@ -135,20 +139,21 @@ if (isset($_POST['idModifier'])) {
             <tr>
                 <td>
                     <?php if (isset($secteursAModifier)) {
-//                        var_dump('ONPASSEICI');
-//                        var_dump($secteursAModifier);
                         afficher_checkbox_secteurs($secteursAModifier);
-                    }
-                    else if(isset($_SESSION['check_list'])) {
-                    afficher_checkbox_secteurs($_SESSION['check_list']);
+                    } else if (isset($_SESSION['check_list'])) {
+                        afficher_checkbox_secteurs($_SESSION['check_list']);
                     } else {
-                    afficher_checkbox_secteurs(null);
+                        afficher_checkbox_secteurs(null);
                     } ?>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <input type="submit" name="submit" value="Enregistrer la structure">
+                    <?php if (isset($_POST['idModifier'])) {
+                        echo '<input type="submit" name="modifier" value="Modifier la structure">';
+                    } else {
+                        echo '<input type="submit" name="submit" value="Enregistrer la structure">';
+                    } ?>
                 </td>
             </tr>
 

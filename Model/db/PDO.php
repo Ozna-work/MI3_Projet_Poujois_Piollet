@@ -128,7 +128,6 @@ function insertStructure(string $nom, string $rue, string $cp, string $ville, in
     } catch (PDOException $e) {
         echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
     } finally {
-        //var_dump($conn ->lastInsertId());
         return $conn->lastInsertId();
         // fermeture de la connexion
         $conn = null;

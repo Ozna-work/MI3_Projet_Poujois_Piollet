@@ -114,7 +114,6 @@ function inserer_nouvelles_structures(string $nom, string $rue, string $cp, stri
 
             //$checkbox est un string
             foreach ($checkbox_list as $checkbox) {
-//                var_dump($checkbox);
                 insertLinkSecteursStructure((int)$idStructure, (int)$checkbox);
             }
         }
@@ -145,10 +144,9 @@ function afficher_checkbox_secteurs($checklist)
 
     for ($i = 0; $i < sizeof($secteurs); $i++) {
         $id = $secteurs[$i][0];
-
         echo "<tr>";
         echo '<td> <input type="checkbox" id="' . $id . '" name="check_list[]" value="' . $id . '"';
-        if (!is_null($checklist) && in_array($i, $checklist)) {
+        if (!is_null($checklist) && in_array($id, $checklist)) {
             echo ' checked="checked" ';
         }
         echo '/>';
@@ -168,9 +166,11 @@ function recuperer_idSecteurs_par_idStructure(int $id)
     $secteurs = getSecteursIdByStructureId($id);
     $res = [];
 
-    for($i = 0; $i<sizeof($secteurs);$i++) {
+    for ($i = 0; $i < sizeof($secteurs); $i++) {
         $res[$i] = $secteurs[$i][0];
     }
+
     return $res;
 }
+
 ?>
