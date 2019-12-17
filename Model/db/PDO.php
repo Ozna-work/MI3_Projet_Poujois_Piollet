@@ -154,6 +154,25 @@ function insertLinkSecteursStructure(int $idStructure, int $idSecteur)
     }
 }
 
+function updateLinkSecteursStructures(int $idStructure, int $idSecteur)
+{
+    try {
+        $conn = getConnexion();
+
+        $stmt_link = $conn->prepare("UPDATE Secteurs_Structures SET ID_STRUCTURE = :idStructure, ID_SECTEUR = :idSecteur");
+        $stmt_link->bindValue("idStructure", $idStructure, PDO::PARAM_INT);
+        $stmt_link->bindValue("idSecteur", $idSecteur, PDO::PARAM_INT);
+
+        $stmt_link->execute();
+
+    } catch (PDOException $e) {
+        echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
+    } finally {
+        // fermeture de la connexion
+        $conn = null;
+    }
+}
+
 function insertSecteur(string $libelle)
 {
     try {
@@ -188,6 +207,41 @@ function deleteStructure(int $id)
     } finally {
         // fermeture de la connexion
         $conn = null;
+    }
+}
+
+function updateStructure(int $id, string $nom, string $rue, string $cp, string $ville, int $estasso, int $nb_donAct)
+{
+    try {
+        $conn = getConnexion();
+        $stmt_structure = $conn->prepare("UPDATE Structure 
+                                                    SET NOM = :nom, RUE = :rue, CP = :cp, VILLE = :ville, ESTASSO = :estasso, NB_DONATEURS = :don, NB_ACTIONNAIRES = :act 
+                                                    WHERE id = :id");
+        $stmt_structure->bindValue("id", $id, PDO::PARAM_INT);
+        $stmt_structure->bindValue("nom", $nom, PDO::PARAM_STR);
+        $stmt_structure->bindValue("rue", $rue, PDO::PARAM_STR);
+        $stmt_structure->bindValue("cp", $cp, PDO::PARAM_STR);
+        $stmt_structure->bindValue("ville", $ville, PDO::PARAM_STR);
+        $stmt_structure->bindValue("estasso", $estasso, PDO::PARAM_INT);
+
+        //Si c'est une association
+        if ($estasso == 1) {
+            $stmt_structure->bindValue("don", $nb_donAct, PDO::PARAM_INT);
+            $stmt_structure->bindValue("act", NULL, PDO::PARAM_NULL);
+        } else {
+            $stmt_structure->bindValue("don", NULL, PDO::PARAM_NULL);
+            $stmt_structure->bindValue("act", $nb_donAct, PDO::PARAM_INT);
+        }
+
+        $stmt_structure->execute();
+
+    } catch (PDOException $e) {
+        echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
+    } finally {
+        return $conn->lastInsertId();
+        // fermeture de la connexion
+        $conn = null;
+
     }
 }
 

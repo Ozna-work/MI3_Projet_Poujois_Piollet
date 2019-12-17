@@ -173,4 +173,34 @@ function recuperer_idSecteurs_par_idStructure(int $id)
     return $res;
 }
 
+function modifier_structure(int $id, string $nom, string $rue, string $cp, string $ville, string $structure, string $nbDonAct, $checkbox_list) {
+    if ($checkbox_list) {
+        $i = 0;
+        $structures = getAllStructures();
+        $structurePresent = false;
+
+        if ($structure == "Association") {
+            $estAsso = 1;
+            $typeContributeur = 6;  //Permet de savoir sur quel indice comparer les donnateurs/actionnaires
+        } else {
+            $estAsso = 0;
+            $typeContributeur = 7;  //Permet de savoir sur quel indice comparer les donnateurs/actionnaires
+        }
+
+        while ($i < sizeof($structures) && !$structurePresent) {
+            $item = $structures[$i];
+            $structurePresent = ($item[1] == $nom && $item[2] == $rue && $item[3] == $cp && $item[4] == $ville && $item[5] == $estAsso && $item[$typeContributeur] == $nbDonAct);
+            $i++;
+        }
+
+        if (!$structurePresent) {
+            $idStructure = updateStructure($id,$nom, $rue, $cp, $ville, $estAsso, $nbDonAct);
+
+            //$checkbox est un string
+            foreach ($checkbox_list as $checkbox) {
+                updateLinkSecteursStructures((int)$idStructure, (int)$checkbox);
+            }
+        }
+    }}
+
 ?>

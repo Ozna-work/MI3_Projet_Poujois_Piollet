@@ -20,8 +20,9 @@ if (isset($_POST['submit'], $_POST['nomStructure'], $_POST['rue'], $_POST['cp'],
     inserer_nouvelles_structures($_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct'], $_POST['check_list']);
 }
 
-if (isset($_POST['modifier'], $_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct'], $_POST['check_list'])) {
-
+if (isset($_POST['modifier'])) {
+//    var_dump($_POST['modifier']);
+//    modifier_structure($_POST['modifier'],$_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct'], $_POST['check_list']);
 }
 
 if (isset($_POST['nomSecteur'])) {
@@ -150,6 +151,7 @@ if (isset($_POST['idModifier'])) {
             <tr>
                 <td>
                     <?php if (isset($_POST['idModifier'])) {
+                        echo '<input hidden name="idModifier" value="">';
                         echo '<input type="submit" name="modifier" value="Modifier la structure">';
                     } else {
                         echo '<input type="submit" name="submit" value="Enregistrer la structure">';
