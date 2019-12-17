@@ -142,7 +142,7 @@ function afficher_checkbox_secteurs($checklist)
 
         echo "<tr>";
         echo '<td> <input type="checkbox" id="' . $id . '" name="check_list[]" value="' . $id . '"';
-        if (in_array($i, $checklist)) {
+        if (!is_null($checklist) && in_array($i, $checklist)) {
             echo ' checked="checked" ';
         }
         echo '/>';

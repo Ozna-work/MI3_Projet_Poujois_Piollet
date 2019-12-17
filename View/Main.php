@@ -91,7 +91,11 @@ if (isset($_POST['idSuppression'])) {
 
             <tr>
                 <td>
-                    <?php afficher_checkbox_secteurs($_SESSION['check_list']) ?>
+                    <?php if (isset($_SESSION['check_list'])) {
+                        afficher_checkbox_secteurs($_SESSION['check_list']);
+                    } else {
+                        afficher_checkbox_secteurs(null);
+                    } ?>
                 </td>
             </tr>
             <tr>
