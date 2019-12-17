@@ -15,6 +15,7 @@ function afficher_structures()
     echo "<th> VILLE </th>";
     echo "<th> NB ACTIONNAIRES/DONNATEURS </th>";
     echo "<th> SUPPRESSION </th>";
+    echo "<th> MODIFIER</th>";
     echo "</tr>";
 
     foreach ($structures as $structure) {
@@ -42,6 +43,11 @@ function afficher_structures()
         echo '<td><form method="post" action="">';
         echo "<input hidden name='idSuppression' value='" . $structure[0] . "'/>";
         echo '<input type="submit" value="Supprimer"/>';
+        echo '</form> </td>';
+
+        echo '<td><form method="post" action="">';
+        echo "<input hidden name='idModifier' value='" . $structure[0] . "'/>";
+        echo '<input type="submit" value="Modifier"/>';
         echo '</form> </td>';
 
         echo "</tr>";
@@ -108,7 +114,7 @@ function inserer_nouvelles_structures(string $nom, string $rue, string $cp, stri
 
             //$checkbox est un string
             foreach ($checkbox_list as $checkbox) {
-                var_dump($checkbox);
+//                var_dump($checkbox);
                 insertLinkSecteursStructure((int)$idStructure, (int)$checkbox);
             }
         }
@@ -138,7 +144,7 @@ function afficher_checkbox_secteurs($checklist)
     $secteurs = getAllSecteurs();
 
     for ($i = 0; $i < sizeof($secteurs); $i++) {
-        $id = $secteurs[$i][0] + 1;
+        $id = $secteurs[$i][0];
 
         echo "<tr>";
         echo '<td> <input type="checkbox" id="' . $id . '" name="check_list[]" value="' . $id . '"';
@@ -150,8 +156,11 @@ function afficher_checkbox_secteurs($checklist)
         echo "</td>";
         echo "</tr>";
     }
+}
 
-
+function recuperer_structure_par_id(int $id)
+{
+    return getStructureById($id);
 }
 
 ?>
