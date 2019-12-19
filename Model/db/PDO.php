@@ -175,24 +175,25 @@ function insertLinkSecteursStructure(int $idStructure, int $idSecteur)
     }
 }
 
-function updateLinkSecteursStructures(int $idStructure, int $idSecteur)
-{
-    try {
-        $conn = getConnexion();
-
-        $stmt_link = $conn->prepare("UPDATE Secteurs_Structures SET ID_STRUCTURE = :idStructure, ID_SECTEUR = :idSecteur");
-        $stmt_link->bindValue("idStructure", $idStructure, PDO::PARAM_INT);
-        $stmt_link->bindValue("idSecteur", $idSecteur, PDO::PARAM_INT);
-
-        $stmt_link->execute();
-
-    } catch (PDOException $e) {
-        echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
-    } finally {
-        // fermeture de la connexion
-        $conn = null;
-    }
-}
+//function updateLinkSecteursStructures(int $idStructure, int $idSecteur)
+//{
+//    try {
+//        $conn = getConnexion();
+//
+//        $stmt_delete = $conn->prepare("DELETE FROM Secteurs_Structures WHERE ID_STRUCTURE = :idStructure");
+//        $stmt_delete->bindValue("idStructure", $idStructure, PDO::PARAM_INT);
+//        $stmt_delete->execute();
+//
+//        insertLinkSecteursStructure($idStructure,$idSecteur);
+//
+//
+//    } catch (PDOException $e) {
+//        echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
+//    } finally {
+//        // fermeture de la connexion
+//        $conn = null;
+//    }
+//}
 
 function insertSecteur(string $libelle)
 {
@@ -210,7 +211,7 @@ function insertSecteur(string $libelle)
     }
 }
 
-function deleteStructure(int $id)
+function deleteAllLinkByIdStructure(int $id)
 {
     try {
         $conn = getConnexion();
@@ -218,6 +219,21 @@ function deleteStructure(int $id)
         $stmt_link = $conn->prepare("DELETE FROM secteurs_structures WHERE id_structure= (:id)");
         $stmt_link->bindValue("id", $id, PDO::PARAM_INT);
         $stmt_link->execute();
+
+    } catch (PDOException $e) {
+        echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
+    } finally {
+        // fermeture de la connexion
+        $conn = null;
+    }
+}
+
+function deleteStructure(int $id)
+{
+    try {
+        $conn = getConnexion();
+
+        deleteAllLinkByIdStructure($id);
 
         $stmt_structure = $conn->prepare("DELETE FROM Structure WHERE id= (:id)");
         $stmt_structure->bindValue("id", $id, PDO::PARAM_INT);
@@ -255,6 +271,24 @@ function updateStructure(int $id, string $nom, string $rue, string $cp, string $
         }
 
         $stmt_structure->execute();
+
+    } catch (PDOException $e) {
+        echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
+    } finally {
+        return $id;
+        // fermeture de la connexion
+        $conn = null;
+
+    }
+}
+
+function updateSecteur(string $nom,int $id) {
+    try {
+        $conn = getConnexion();
+        $stmt_secteur = $conn->prepare("UPDATE Structure SET NOM = :nom WHERE id = :id");
+        $stmt_secteur->bindValue("nom", $nom, PDO::PARAM_STR);
+
+        $stmt_secteur->execute();
 
     } catch (PDOException $e) {
         echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();

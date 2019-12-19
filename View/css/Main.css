@@ -21,6 +21,9 @@ form {
     margin-bottom: 50px;
 }
 
+#tableSecteur {
+    width: 200px;
+}
 .column {
     display: inline-block;
 }

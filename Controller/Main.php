@@ -64,8 +64,8 @@ function afficher_secteurs()
     foreach ($secteurs as $secteur) {
         echo "<tr>";
         echo "<td>" . $secteur[1] . "</td>";
-        echo "<td> <input class='modifieSecteur' name='idSecteurModifie' type='submit' value='".$secteur[0]."'/>";
-        echo "<td> <input class='deleteSecteur' name='idSecteurSupprime' type='submit' value='".$secteur[0]."'/>";
+        echo "<td> <input class='modifieSecteur' name='idSecteurAModifier' type='submit' value='" . $secteur[0] . "'/>";
+        echo "<td> <input class='deleteSecteur' name='idSecteurSupprime' type='submit' value='" . $secteur[0] . "'/>";
         echo "</tr>";
     }
 
@@ -149,7 +149,7 @@ function supprimer_secteur(int $id)
     $secteurUtilise = false;
 
     //Tant qu'on a pas parcouru toutes les structures et qu'on a pas trouvé
-    while ($i < sizeof($secteurs) && !$secteurPresent &&!$secteurUtilise) {
+    while ($i < sizeof($secteurs) && !$secteurPresent && !$secteurUtilise) {
         $secteurUtilise = $linkSecteurStructure[$i][2] == $id;
         $secteurPresent = $secteurs[$i][0] == $id;
         $i++;
@@ -195,7 +195,8 @@ function recuperer_idSecteurs_par_idStructure(int $id)
     return $res;
 }
 
-function modifier_structure(int $id, string $nom, string $rue, string $cp, string $ville, string $structure, string $nbDonAct, $checkbox_list) {
+function modifier_structure(int $id, string $nom, string $rue, string $cp, string $ville, string $structure, string $nbDonAct, $checkbox_list)
+{
     if ($checkbox_list) {
         $i = 0;
         $structures = getAllStructures();
@@ -211,18 +212,41 @@ function modifier_structure(int $id, string $nom, string $rue, string $cp, strin
 
         while ($i < sizeof($structures) && !$structurePresent) {
             $item = $structures[$i];
+
+            //Vaut faux si différent
             $structurePresent = ($item[1] == $nom && $item[2] == $rue && $item[3] == $cp && $item[4] == $ville && $item[5] == $estAsso && $item[$typeContributeur] == $nbDonAct);
+
+            //Si c'est présent il faut vérifier si les associations sont les mêmes
+            if ($structurePresent) {
+                $anciensSecteurs = getSecteursIdByStructureId($id);
+                $ind = 0;
+                $resFinalAnciensSecteurs =[];
+                while($ind<sizeof($anciensSecteurs)) {
+                    $resFinalAnciensSecteurs[$ind] = $anciensSecteurs[$ind][0];
+                    $ind++;
+                }
+
+                $structurePresent = empty(array_diff($resFinalAnciensSecteurs, $checkbox_list));
+            } else {
+                $structurePresent = false;
+            }
             $i++;
         }
 
         if (!$structurePresent) {
-            $idStructure = updateStructure($id,$nom, $rue, $cp, $ville, $estAsso, $nbDonAct);
-
+            $idStructure = updateStructure($id, $nom, $rue, $cp, $ville, $estAsso, $nbDonAct);
+            deleteAllLinkByIdStructure($id);
             //$checkbox est un string
             foreach ($checkbox_list as $checkbox) {
-                updateLinkSecteursStructures((int)$idStructure, (int)$checkbox);
+                insertLinkSecteursStructure((int)$idStructure, (int)$checkbox);
             }
         }
-    }}
+    }
+}
+
+function modifier_secteur(int $id, string $nom)
+{
+    updateSecteur($id, $nom);
+}
 
 ?>

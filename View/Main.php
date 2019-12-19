@@ -21,8 +21,7 @@ if (isset($_POST['submit'], $_POST['nomStructure'], $_POST['rue'], $_POST['cp'],
 }
 
 if (isset($_POST['modifier'])) {
-//    var_dump($_POST['modifier']);
-//    modifier_structure($_POST['modifier'],$_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct'], $_POST['check_list']);
+    modifier_structure((int)$_POST['idModifier'],$_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct'], $_POST['check_list']);
 }
 
 if (isset($_POST['nomSecteur'])) {
@@ -47,9 +46,13 @@ if (isset($_POST['clear'])) {
 }
 
 if (isset($_POST['idSecteurSupprime'])) {
-    var_dump($_POST['idSecteurSupprime']);
     supprimer_secteur($_POST['idSecteurSupprime']);
 }
+
+if(isset($_POST['modifierSecteur'])) {
+    modifier_secteur($_POST['idSecteurModifie'], $_POST['nomSecteur']);
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -161,7 +164,7 @@ if (isset($_POST['idSecteurSupprime'])) {
             <tr>
                 <td>
                     <?php if (isset($_POST['idModifier'])) {
-                        echo '<input hidden name="idModifier" value="">';
+                        echo '<input hidden name="idModifier" value="'.$_POST['idModifier'].'">';
                         echo '<input type="submit" name="modifier" value="Modifier la structure">';
                     } else {
                         echo '<input type="submit" name="submit" value="Enregistrer la structure">';
@@ -184,17 +187,24 @@ if (isset($_POST['idSecteurSupprime'])) {
 <div class="column">
     <form class="" method="post">
 
-        <table>
+        <table id="tableSecteur">
             <tr>
                 <td>
                     <label for="nomSecteur">Nouveau secteur:</label>
-                    <input id="nomSecteur" name="nomSecteur" type="text" maxlength="100"
+                    <input required id="nomSecteur" name="nomSecteur" type="text" maxlength="100"
                            value="<?php if (isset($_SESSION['nomSecteur'])) echo htmlspecialchars($_SESSION['nomSecteur']); ?>"/>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <input type="submit" value="Ajouter">
+                    <?php
+                    if (isset($_POST['idSecteurAModifier'])){
+                        echo '<input type="submit" value="$_POST[idSecteurAModifier]">';
+                    }else{
+                        echo '<input type="submit" value="Ajouter">';
+                    }
+                    ?>
+
                 </td>
             </tr>
 
