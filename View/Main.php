@@ -40,6 +40,11 @@ if (isset($_POST['idModifier'])) {
     $structAModifier = recuperer_structure_par_id($_POST['idModifier'])[0];
     $secteursAModifier = recuperer_idSecteurs_par_idStructure($_POST['idModifier']);
 }
+
+if (isset($_POST['clear'])) {
+    $_POST = null;
+    session_unset();
+}
 ?>
 
 <!DOCTYPE html>
@@ -156,10 +161,14 @@ if (isset($_POST['idModifier'])) {
                     } else {
                         echo '<input type="submit" name="submit" value="Enregistrer la structure">';
                     } ?>
+
                 </td>
             </tr>
 
         </table>
+    </form>
+    <form method="post">
+        <input type="submit" name="clear" value="Clear">
     </form>
 </div>
 

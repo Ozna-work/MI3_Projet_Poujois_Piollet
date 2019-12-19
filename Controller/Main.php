@@ -64,6 +64,7 @@ function afficher_secteurs()
     foreach ($secteurs as $secteur) {
         echo "<tr>";
         echo "<td>" . $secteur[1] . "</td>";
+        echo "<td> <input class='deleteSecteur' name='idSecteurSupprime' type='submit' value='".$secteur[0]." '/>";
         echo "</tr>";
     }
 
