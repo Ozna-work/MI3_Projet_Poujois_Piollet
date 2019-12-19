@@ -35,6 +35,27 @@ function getAllStructures(): array
     return array();
 }
 
+function getAllLinkSecteurStructure(): array
+{
+    try {
+        $conn = getConnexion();
+        $stmt = $conn->prepare("select * from secteurs_structures");
+        $res = $stmt->execute();
+
+        if ($res) {
+            $lines = $stmt->fetchAll();
+            return $lines;
+        }
+    } catch (PDOException $e) {
+        echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
+    } finally {
+        // fermeture de la connexion
+        $conn = null;
+    }
+
+    return array();
+}
+
 function getStructureById($id)
 {
     try {

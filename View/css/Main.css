@@ -25,7 +25,16 @@ form {
     display: inline-block;
 }
 
-.deleteSecteur {
+.deleteSecteur{
+    background: url(../../src/delete.png) no-repeat;
+}
+
+.modifieSecteur{
+    background: url(../../src/edit-button.png) no-repeat;
+}
+
+
+.deleteSecteur, .modifieSecteur {
     color: inherit;
     border: none;
     padding: 0;
@@ -36,9 +45,9 @@ form {
     text-indent: 100%;
     white-space: nowrap;
     overflow: hidden;
-    background: url(../../src/delete.png) no-repeat;
     width: 20px;
     height: 20px;
     background-size: 100%
 }
+
 

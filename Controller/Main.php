@@ -64,6 +64,7 @@ function afficher_secteurs()
     foreach ($secteurs as $secteur) {
         echo "<tr>";
         echo "<td>" . $secteur[1] . "</td>";
+        echo "<td> <input class='modifieSecteur' name='idSecteurModifie' type='submit' value='".$secteur[0]."'/>";
         echo "<td> <input class='deleteSecteur' name='idSecteurSupprime' type='submit' value='".$secteur[0]."'/>";
         echo "</tr>";
     }
@@ -143,15 +144,18 @@ function supprimer_secteur(int $id)
 {
     $i = 0;
     $secteurs = getAllSecteurs();
+    $linkSecteurStructure = getAllLinkSecteurStructure();
     $secteurPresent = false;
+    $secteurUtilise = false;
 
     //Tant qu'on a pas parcouru toutes les structures et qu'on a pas trouvé
-    while ($i < sizeof($secteurs) && !$secteurPresent) {
+    while ($i < sizeof($secteurs) && !$secteurPresent &&!$secteurUtilise) {
+        $secteurUtilise = $linkSecteurStructure[$i][2] == $id;
         $secteurPresent = $secteurs[$i][0] == $id;
         $i++;
     }
 
-    if ($secteurPresent) {
+    if ($secteurPresent && !$secteurUtilise) {
         deleteSecteur($id);
     }
 }
