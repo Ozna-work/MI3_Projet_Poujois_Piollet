@@ -45,6 +45,11 @@ if (isset($_POST['clear'])) {
     $_POST = null;
     session_unset();
 }
+
+if (isset($_POST['idSecteurSupprime'])) {
+    var_dump($_POST['idSecteurSupprime']);
+    supprimer_secteur($_POST['idSecteurSupprime']);
+}
 ?>
 
 <!DOCTYPE html>

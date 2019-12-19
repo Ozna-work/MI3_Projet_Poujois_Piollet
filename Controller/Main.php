@@ -64,7 +64,7 @@ function afficher_secteurs()
     foreach ($secteurs as $secteur) {
         echo "<tr>";
         echo "<td>" . $secteur[1] . "</td>";
-        echo "<td> <input class='deleteSecteur' name='idSecteurSupprime' type='submit' value='".$secteur[0]." '/>";
+        echo "<td> <input class='deleteSecteur' name='idSecteurSupprime' type='submit' value='".$secteur[0]."'/>";
         echo "</tr>";
     }
 
@@ -136,6 +136,23 @@ function supprimer_structure(int $id)
 
     if ($structurePresent) {
         deleteStructure($id);
+    }
+}
+
+function supprimer_secteur(int $id)
+{
+    $i = 0;
+    $secteurs = getAllSecteurs();
+    $secteurPresent = false;
+
+    //Tant qu'on a pas parcouru toutes les structures et qu'on a pas trouvé
+    while ($i < sizeof($secteurs) && !$secteurPresent) {
+        $secteurPresent = $secteurs[$i][0] == $id;
+        $i++;
+    }
+
+    if ($secteurPresent) {
+        deleteSecteur($id);
     }
 }
 

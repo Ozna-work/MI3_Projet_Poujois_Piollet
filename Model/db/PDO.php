@@ -245,4 +245,25 @@ function updateStructure(int $id, string $nom, string $rue, string $cp, string $
     }
 }
 
+function deleteSecteur(int $id)
+{
+    try {
+        $conn = getConnexion();
+
+        $stmt_link = $conn->prepare("DELETE FROM secteurs_structures WHERE id_secteur= (:id)");
+        $stmt_link->bindValue("id", $id, PDO::PARAM_INT);
+        $stmt_link->execute();
+
+        $stmt_structure = $conn->prepare("DELETE FROM Secteur WHERE id= (:id)");
+        $stmt_structure->bindValue("id", $id, PDO::PARAM_INT);
+        $stmt_structure->execute();
+
+    } catch (PDOException $e) {
+        echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
+    } finally {
+        // fermeture de la connexion
+        $conn = null;
+    }
+}
+
 ?>
