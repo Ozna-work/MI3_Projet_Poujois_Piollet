@@ -49,6 +49,10 @@ if (isset($_POST['idSecteurSupprime'])) {
     supprimer_secteur($_POST['idSecteurSupprime']);
 }
 
+if (isset($_POST['idSecteurAModifier'])){
+//    $_SESSION['nomSecteur'] =
+}
+
 if(isset($_POST['modifierSecteur'], $_POST['idSecteurAModifier'])) {
     modifier_secteur((int)$_POST['idSecteurAModifier'], $_POST['nomSecteur']);
 }
