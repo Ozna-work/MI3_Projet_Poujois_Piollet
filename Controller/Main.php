@@ -14,6 +14,7 @@ function afficher_structures()
     echo "<th> CODE POSTALE </th>";
     echo "<th> VILLE </th>";
     echo "<th> NB ACTIONNAIRES/DONNATEURS </th>";
+    echo "<th> SECTEURS </th>";
     echo "<th> SUPPRESSION </th>";
     echo "<th> MODIFIER</th>";
     echo "</tr>";
@@ -39,6 +40,16 @@ function afficher_structures()
         } else {
             echo "<td>" . $structure[7] . "</td>";
         }
+
+        //Affichage des secteurs
+        echo "<td>";
+        $idSecteurs = getSecteursIdByStructureId($structure[0]);
+        foreach ($idSecteurs as $idSecteur) {
+            $libelleSecteur = getSecteurLibelleById($idSecteur[0])[0][0];
+            echo $libelleSecteur.'<br>';
+        }
+
+        echo "</td>";
 
         echo '<td><form method="post" action="">';
         echo "<input hidden name='idSuppression' value='" . $structure[0] . "'/>";
@@ -195,6 +206,11 @@ function recuperer_idSecteurs_par_idStructure(int $id)
     return $res;
 }
 
+function recuperer_libelle_secteur_par_id(int $id)
+{
+    return getSecteurLibelleById($id)[0][0];
+}
+
 function modifier_structure(int $id, string $nom, string $rue, string $cp, string $ville, string $structure, string $nbDonAct, $checkbox_list)
 {
     if ($checkbox_list) {
@@ -220,8 +236,8 @@ function modifier_structure(int $id, string $nom, string $rue, string $cp, strin
             if ($structurePresent) {
                 $anciensSecteurs = getSecteursIdByStructureId($id);
                 $ind = 0;
-                $resFinalAnciensSecteurs =[];
-                while($ind<sizeof($anciensSecteurs)) {
+                $resFinalAnciensSecteurs = [];
+                while ($ind < sizeof($anciensSecteurs)) {
                     $resFinalAnciensSecteurs[$ind] = $anciensSecteurs[$ind][0];
                     $ind++;
                 }

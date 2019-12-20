@@ -117,6 +117,26 @@ function getSecteursIdByStructureId($id)
     }
 }
 
+function getSecteurLibelleById($id)
+{
+    try {
+        $conn = getConnexion();
+        $stmt = $conn->prepare("select libelle from secteur where id = :id");
+        $stmt->bindValue("id", $id, PDO::PARAM_INT);
+        $res = $stmt->execute();
+
+        if ($res) {
+            return $stmt->fetchAll();
+        }
+
+    } catch (PDOException $e) {
+        echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
+    } finally {
+        // fermeture de la connexion
+        $conn = null;
+    }
+}
+
 
 function getLastInsertId()
 {
@@ -284,8 +304,6 @@ function updateStructure(int $id, string $nom, string $rue, string $cp, string $
 
 function updateSecteur(int $id,string $nom) {
     try {
-        var_dump($id);
-        var_dump($nom);
         $conn = getConnexion();
         $stmt_secteur = $conn->prepare("UPDATE Secteur SET LIBELLE = :nom WHERE id = :id");
         $stmt_secteur->bindValue("nom", $nom, PDO::PARAM_STR);

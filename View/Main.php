@@ -50,7 +50,7 @@ if (isset($_POST['idSecteurSupprime'])) {
 }
 
 if (isset($_POST['idSecteurAModifier'])){
-//    $_SESSION['nomSecteur'] =
+    $_SESSION['nomSecteur'] = recuperer_libelle_secteur_par_id((int)$_POST['idSecteurAModifier']);
 }
 
 if(isset($_POST['modifierSecteur'], $_POST['idSecteurAModifier'])) {
@@ -195,7 +195,7 @@ if(isset($_POST['modifierSecteur'], $_POST['idSecteurAModifier'])) {
             <tr>
                 <td>
                     <label for="nomSecteur">Nouveau secteur:</label>
-                    <input required id="nomSecteur" name="nomSecteur" type="text" maxlength="100"
+                    <input id="nomSecteur" name="nomSecteur" type="text" maxlength="100"
                            value="<?php if (isset($_SESSION['nomSecteur'])) echo htmlspecialchars($_SESSION['nomSecteur']); ?>"/>
                 </td>
             </tr>
