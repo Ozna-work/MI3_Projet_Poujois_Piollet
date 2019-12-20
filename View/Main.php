@@ -24,7 +24,7 @@ if (isset($_POST['modifier'])) {
     modifier_structure((int)$_POST['idModifier'],$_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct'], $_POST['check_list']);
 }
 
-if (isset($_POST['nomSecteur'])) {
+if (isset($_POST['ajouterSecteur'], $_POST['nomSecteur'])) {
     $_SESSION['nomSecteur'] = $_POST['nomSecteur'];
 
     inserer_nouveaux_secteurs($_POST['nomSecteur']);
@@ -49,8 +49,8 @@ if (isset($_POST['idSecteurSupprime'])) {
     supprimer_secteur($_POST['idSecteurSupprime']);
 }
 
-if(isset($_POST['modifierSecteur'])) {
-    modifier_secteur($_POST['idSecteurModifie'], $_POST['nomSecteur']);
+if(isset($_POST['modifierSecteur'], $_POST['idSecteurAModifier'])) {
+    modifier_secteur((int)$_POST['idSecteurAModifier'], $_POST['nomSecteur']);
 }
 
 ?>
@@ -199,9 +199,10 @@ if(isset($_POST['modifierSecteur'])) {
                 <td>
                     <?php
                     if (isset($_POST['idSecteurAModifier'])){
-                        echo '<input type="submit" value="$_POST[idSecteurAModifier]">';
+                        echo '<input hidden name="idSecteurAModifier" value="'.$_POST['idSecteurAModifier'].'">';
+                        echo '<input type="submit" name="modifierSecteur" value="Modifier">';
                     }else{
-                        echo '<input type="submit" value="Ajouter">';
+                        echo '<input type="submit" name="ajouterSecteur" value="Ajouter">';
                     }
                     ?>
 
