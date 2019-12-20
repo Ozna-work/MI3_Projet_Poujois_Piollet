@@ -284,8 +284,10 @@ function updateStructure(int $id, string $nom, string $rue, string $cp, string $
 
 function updateSecteur(int $id,string $nom) {
     try {
+        var_dump($id);
+        var_dump($nom);
         $conn = getConnexion();
-        $stmt_secteur = $conn->prepare("UPDATE Secteur SET NOM = :nom WHERE id = :id");
+        $stmt_secteur = $conn->prepare("UPDATE Secteur SET LIBELLE = :nom WHERE id = :id");
         $stmt_secteur->bindValue("nom", $nom, PDO::PARAM_STR);
         $stmt_secteur->bindValue("id", $id, PDO::PARAM_INT);
 
