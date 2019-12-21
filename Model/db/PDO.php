@@ -302,7 +302,8 @@ function updateStructure(int $id, string $nom, string $rue, string $cp, string $
     }
 }
 
-function updateSecteur(int $id,string $nom) {
+function updateSecteur(int $id, string $nom)
+{
     try {
         $conn = getConnexion();
         $stmt_secteur = $conn->prepare("UPDATE Secteur SET LIBELLE = :nom WHERE id = :id");

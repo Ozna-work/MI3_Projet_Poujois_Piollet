@@ -5,18 +5,18 @@ require_once('../Model/db/PDO.php');
 function afficher_structures()
 {
     $structures = getAllStructures();
-    echo "<table id='listeStructures'>";
+    echo "<table class=\"table table-hover\" id='listeStructures'>";
 
     echo "<tr>";
-    echo "<th> TYPE</th>";
-    echo "<th> NOM </th>";
-    echo "<th> RUE </th>";
-    echo "<th> CODE POSTALE </th>";
-    echo "<th> VILLE </th>";
-    echo "<th> NB ACTIONNAIRES/DONNATEURS </th>";
-    echo "<th> SECTEURS </th>";
-    echo "<th> SUPPRESSION </th>";
-    echo "<th> MODIFIER</th>";
+    echo "<th scope=\"col\"> TYPE</th>";
+    echo "<th scope=\"col\"> NOM </th>";
+    echo "<th scope=\"col\"> RUE </th>";
+    echo "<th scope=\"col\"> CODE POSTALE </th>";
+    echo "<th scope=\"col\"> VILLE </th>";
+    echo "<th scope=\"col\"> NB ACTIONNAIRES/DONNATEURS </th>";
+    echo "<th scope=\"col\"> SECTEURS </th>";
+    echo "<th scope=\"col\"> SUPPRESSION </th>";
+    echo "<th scope=\"col\"> MODIFIER</th>";
     echo "</tr>";
 
     foreach ($structures as $structure) {
@@ -46,20 +46,21 @@ function afficher_structures()
         $idSecteurs = getSecteursIdByStructureId($structure[0]);
         foreach ($idSecteurs as $idSecteur) {
             $libelleSecteur = getSecteurLibelleById($idSecteur[0])[0][0];
-            echo $libelleSecteur.'<br>';
+            echo $libelleSecteur . '<br>';
         }
 
         echo "</td>";
 
         echo '<td><form method="post" action="">';
-        echo "<input hidden name='idSuppression' value='" . $structure[0] . "'/>";
-        echo '<input type="submit" value="Supprimer"/>';
+        echo "<input hidden name='idModifier' value='" . $structure[0] . "'/>";
+        echo '<input class="btn btn-secondary" type="submit" value="Modifier"/>';
         echo '</form> </td>';
 
         echo '<td><form method="post" action="">';
-        echo "<input hidden name='idModifier' value='" . $structure[0] . "'/>";
-        echo '<input type="submit" value="Modifier"/>';
+        echo "<input hidden name='idSuppression' value='" . $structure[0] . "'/>";
+        echo '<input  class="btn btn-danger" type="submit" value="Supprimer"/>';
         echo '</form> </td>';
+
 
         echo "</tr>";
     }
@@ -71,14 +72,29 @@ function afficher_secteurs()
 {
     $secteurs = getAllSecteurs();
 
-
+    echo '<table>';
     foreach ($secteurs as $secteur) {
+
+//        echo "<tr>";
+//        echo "<td>" . $secteur[1] . "</td>";
+//        echo "<td> <input class='modifieSecteur' name='idSecteurAModifier' type='submit' value='" . $secteur[0] . "'/>";
+//        echo "<td> <input class='deleteSecteur' name='idSecteurSupprime' type='submit' value='" . $secteur[0] . "'/>";
+//        echo "</tr>";
+
+        echo '<div class="form-group">';
+//        echo '  <label class="col-form-label">'. $secteur[1] .'</label>';
+//        echo "<input class='modifieSecteur' name='idSecteurAModifier' type='submit' value='" . $secteur[0] . "'/>";
+//        echo "<input class='deleteSecteur' name='idSecteurSupprime' type='submit' value='" . $secteur[0] . "'/>";
         echo "<tr>";
         echo "<td>" . $secteur[1] . "</td>";
         echo "<td> <input class='modifieSecteur' name='idSecteurAModifier' type='submit' value='" . $secteur[0] . "'/>";
         echo "<td> <input class='deleteSecteur' name='idSecteurSupprime' type='submit' value='" . $secteur[0] . "'/>";
         echo "</tr>";
+        echo '</div>';
+
     }
+    echo '</table>';
+
 
 }
 
@@ -177,15 +193,23 @@ function afficher_checkbox_secteurs($checklist)
 
     for ($i = 0; $i < sizeof($secteurs); $i++) {
         $id = $secteurs[$i][0];
-        echo "<tr>";
-        echo '<td> <input type="checkbox" id="' . $id . '" name="check_list[]" value="' . $id . '"';
+        echo " <div class=\"form-check\">";
+//        echo '<li> <input type="checkbox" id="' . $id . '" name="check_list[]" value="' . $id . '"';
+//        if (!is_null($checklist) && in_array($id, $checklist)) {
+//            echo ' checked="checked" ';
+//        }
+//        echo '/>';
+//        echo '<label for="' . $secteurs[$i][0] . '">' . $secteurs[$i][1] . '</label>';
+
+        echo '<label class="form-check-label">' .
+            '<input type="checkbox" id="' . $id . '" name="check_list[]" class="form-check-input" value="' . $id . '"';
         if (!is_null($checklist) && in_array($id, $checklist)) {
             echo ' checked="checked" ';
         }
-        echo '/>';
-        echo '<label for="' . $secteurs[$i][0] . '">' . $secteurs[$i][1] . '</label>';
-        echo "</td>";
-        echo "</tr>";
+        echo '>' . $secteurs[$i][1];
+        '</label>';
+        echo "</li>";
+        echo "</div>";
     }
 }
 
