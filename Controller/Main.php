@@ -1,5 +1,8 @@
 <?php
 
+require_once("../Model/Structure.php");
+require_once("../Model/Association.php");
+require_once("../Model/Entreprise.php");
 require_once('../Model/db/PDO.php');
 
 function afficher_structures()

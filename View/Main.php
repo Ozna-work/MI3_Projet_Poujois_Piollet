@@ -4,8 +4,9 @@ include_once('../Controller/Main.php');
 
 session_start();
 
-if (isset($_POST['idModifier'])) {
-    echo $_POST['idModifier'];
+if (isset($_POST['clear'])) {
+    $_POST = null;
+    session_unset();
 }
 
 if (isset($_POST['submit'], $_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct'], $_POST['check_list'])) {
@@ -22,6 +23,14 @@ if (isset($_POST['submit'], $_POST['nomStructure'], $_POST['rue'], $_POST['cp'],
 
 if (isset($_POST['modifier'])) {
     modifier_structure((int)$_POST['idModifier'], $_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct'], $_POST['check_list']);
+    session_unset();
+    $_POST = null;
+}
+
+if (isset($_POST['modifierSecteur'], $_POST['idSecteurAModifier'])) {
+    modifier_secteur((int)$_POST['idSecteurAModifier'], $_POST['nomSecteur']);
+    session_unset();
+    $_POST = null;
 }
 
 if (isset($_POST['ajouterSecteur'], $_POST['nomSecteur'])) {
@@ -40,21 +49,12 @@ if (isset($_POST['idModifier'])) {
     $secteursAModifier = recuperer_idSecteurs_par_idStructure($_POST['idModifier']);
 }
 
-if (isset($_POST['clear'])) {
-    $_POST = null;
-    session_unset();
-}
-
 if (isset($_POST['idSecteurSupprime'])) {
     supprimer_secteur($_POST['idSecteurSupprime']);
 }
 
 if (isset($_POST['idSecteurAModifier'])) {
     $_SESSION['nomSecteur'] = recuperer_libelle_secteur_par_id((int)$_POST['idSecteurAModifier']);
-}
-
-if (isset($_POST['modifierSecteur'], $_POST['idSecteurAModifier'])) {
-    modifier_secteur((int)$_POST['idSecteurAModifier'], $_POST['nomSecteur']);
 }
 
 ?>

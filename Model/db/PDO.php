@@ -14,6 +14,7 @@ function getConnexion(): PDO
     return $conn;
 }
 
+//Récupère toutes les structures présentes en base de données
 function getAllStructures(): array
 {
     try {
@@ -21,9 +22,20 @@ function getAllStructures(): array
         $stmt = $conn->prepare("select * from structure");
         $res = $stmt->execute();
 
+        //Si la requete s'est exectuée sans erreur
         if ($res) {
-            $lines = $stmt->fetchAll();
-            return $lines;
+            $structuresBd = $stmt->fetchAll(); //Recuperation des structures
+            $structures = array();
+
+            //Transformation des données en objets
+            foreach ($structuresBd as $item){
+                if ($item[5] == 1){ //Si estAsso = 1
+                    array_push($structures, Association::buildFromArray($item));    //Création d'une association
+                }else{
+                    array_push($structures, Entreprise::buildFromArray($item));     //Sinon création d'une entreprise
+                }
+            }
+            return $structuresBd;  //TODO retourner l'array d'objets
         }
     } catch (PDOException $e) {
         echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
@@ -32,9 +44,10 @@ function getAllStructures(): array
         $conn = null;
     }
 
-    return array();
+    return array(); //En cas d'erreur on retourne un array vide
 }
 
+//récupère tous les éléments de la table associant secteurs et structures
 function getAllLinkSecteurStructure(): array
 {
     try {
@@ -42,6 +55,7 @@ function getAllLinkSecteurStructure(): array
         $stmt = $conn->prepare("select * from secteurs_structures");
         $res = $stmt->execute();
 
+        //Si la requete s'est exectuée sans erreur
         if ($res) {
             $lines = $stmt->fetchAll();
             return $lines;
@@ -53,9 +67,10 @@ function getAllLinkSecteurStructure(): array
         $conn = null;
     }
 
-    return array();
+    return array();//En cas d'erreur on retourne un array vide
 }
 
+//Retourne la structure correspondant à l'id donné
 function getStructureById($id)
 {
     try {
@@ -64,8 +79,17 @@ function getStructureById($id)
         $stmt->bindValue("id", $id, PDO::PARAM_INT);
         $res = $stmt->execute();
 
+        //Si la requete s'est exectuée sans erreur
         if ($res) {
-            return $stmt->fetchAll();
+            $structureDb = $stmt->fetchAll();
+            if ($structureDb[0][5] == 1)    //Si estAsso = 1
+            {
+                $structure = Association::buildFromArray($structureDb[0]);
+            }else{
+                $structure = Entreprise::buildFromArray($structureDb[0]);
+            }
+
+            return $structureDb;   //TODO Retourner l'objet
         }
 
     } catch (PDOException $e) {
@@ -76,6 +100,7 @@ function getStructureById($id)
     }
 }
 
+//Retourne tous les secteurs ce la base de données
 function getAllSecteurs(): array
 {
     try {
@@ -83,9 +108,14 @@ function getAllSecteurs(): array
         $stmt = $conn->prepare("select * from secteur");
         $res = $stmt->execute();
 
+        //Si la requete s'est exectuée sans erreur
         if ($res) {
             $lines = $stmt->fetchAll();
-            return $lines;
+            $secteurs = [];
+            foreach ($lines as $item){
+                array_push($secteurs,$item);
+            }
+            return $lines;  //TODO retourner l'array d'objet
         }
     } catch (PDOException $e) {
         echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
@@ -94,9 +124,11 @@ function getAllSecteurs(): array
         $conn = null;
     }
 
-    return array();
+    return array();//En cas d'erreur on retourne un array vide
 }
 
+//Recupère les Id des secteurs associés à une structure donnée
+//TODO Retourner des objets secteur plutot que des id ? voir comment la fonction est utilisée, peut améliorer la lisibilité si pas d'avantages pratiques
 function getSecteursIdByStructureId($id)
 {
     try {
@@ -117,6 +149,8 @@ function getSecteursIdByStructureId($id)
     }
 }
 
+//Retourne le libellé d'un secteur d'id donné
+//TODO Retourner un objet secteur plutot que le nom ? voir comment la fonction est utilisée, peut améliorer la lisibilité si pas d'avantages pratiques
 function getSecteurLibelleById($id)
 {
     try {
@@ -137,13 +171,7 @@ function getSecteurLibelleById($id)
     }
 }
 
-
-function getLastInsertId()
-{
-    $conn = getConnexion();
-    return $conn->lastInsertId();
-}
-
+//Insère une nouvelle structure et retourne son id
 function insertStructure(string $nom, string $rue, string $cp, string $ville, int $estasso, int $nb_donAct)
 {
     try {
@@ -169,13 +197,15 @@ function insertStructure(string $nom, string $rue, string $cp, string $ville, in
     } catch (PDOException $e) {
         echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
     } finally {
-        return $conn->lastInsertId();
+        $id = $conn->lastInsertId();
         // fermeture de la connexion
         $conn = null;
 
+        return $id;
     }
 }
 
+//Insère un lien entre une structure et le secteur correspondant
 function insertLinkSecteursStructure(int $idStructure, int $idSecteur)
 {
     try {
@@ -215,6 +245,7 @@ function insertLinkSecteursStructure(int $idStructure, int $idSecteur)
 //    }
 //}
 
+//Insère un nouveau secteur en base de données
 function insertSecteur(string $libelle)
 {
     try {
@@ -231,6 +262,7 @@ function insertSecteur(string $libelle)
     }
 }
 
+//Supprime tous les liens d'une structure à ses secteurs
 function deleteAllLinkByIdStructure(int $id)
 {
     try {
@@ -248,12 +280,13 @@ function deleteAllLinkByIdStructure(int $id)
     }
 }
 
+//Supprime une structure (et les liens à ses secteurs)
 function deleteStructure(int $id)
 {
     try {
         $conn = getConnexion();
 
-        deleteAllLinkByIdStructure($id);
+        deleteAllLinkByIdStructure($id);    //Supprime les liens structure -> secteurs
 
         $stmt_structure = $conn->prepare("DELETE FROM Structure WHERE id= (:id)");
         $stmt_structure->bindValue("id", $id, PDO::PARAM_INT);
@@ -267,6 +300,7 @@ function deleteStructure(int $id)
     }
 }
 
+//Met à jour les informations d'une structure (selon son id), et retourne son id
 function updateStructure(int $id, string $nom, string $rue, string $cp, string $ville, int $estasso, int $nb_donAct)
 {
     try {
@@ -295,13 +329,14 @@ function updateStructure(int $id, string $nom, string $rue, string $cp, string $
     } catch (PDOException $e) {
         echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
     } finally {
-        return $id;
         // fermeture de la connexion
         $conn = null;
 
+        return $id;
     }
 }
 
+//Met à jour un secteur en se basant sur son id, et retourne son id
 function updateSecteur(int $id, string $nom)
 {
     try {
@@ -315,13 +350,14 @@ function updateSecteur(int $id, string $nom)
     } catch (PDOException $e) {
         echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
     } finally {
-        return $conn->lastInsertId();
         // fermeture de la connexion
         $conn = null;
 
+        return $id;
     }
 }
 
+//Supprime un secteur selon son id
 function deleteSecteur(int $id)
 {
     try {

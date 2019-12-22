@@ -261,3 +261,8 @@ a.article:hover {
     top: 0;
     right: 0;
 }
+
+/*Pour cacher les boutons qui apparaissent avec une fenetre plus petite*/
+.d-lg-none {
+    display: none!important;
+}

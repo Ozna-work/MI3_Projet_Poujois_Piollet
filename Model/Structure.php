@@ -4,11 +4,11 @@ abstract class Structure
 {
     //penser à limiter la taille des champs sur les inputs
 
-    private int $_id;
-    private string $_nom;
-    private string $_rue;
-    private string $_cp;
-    private string $_ville;
+    private $_id;
+    private $_nom;
+    private $_rue;
+    private $_cp;
+    private $_ville;
 
     public function __construct(int $_id, string $_nom, string $_rue, string $_cp, string $_ville)
     {
@@ -18,6 +18,10 @@ abstract class Structure
         $this->_cp = $_cp;
         $this->_ville = $_ville;
     }
+
+    public static abstract function buildFromArray(array $item);
+
+    public static abstract function buildFromData(int $_id, string $_nom, string $_rue, string $_cp, string $_ville, int $_nbDonnateurs);
 
     public function getId(): int
     {
@@ -68,5 +72,7 @@ abstract class Structure
     {
         $this->_ville = $ville;
     }
+
+    public abstract  function estAsso():int;
 
 }

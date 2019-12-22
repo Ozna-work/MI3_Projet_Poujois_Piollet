@@ -3,15 +3,25 @@
 
 class Secteur
 {
-    private int $_id;
-    private string $_varchar;
+    private $_id;
+    private $_nom;
 
     //Penser à voir pour l'id
-    public function __construct(string $_varchar)
+    private function __construct(int $_id,string $_nom)
     {
-        $this->_varchar = $_varchar;
+        $this->_id = $_id;
+        $this->_nom = $_nom;
     }
 
+    public static function buildFromArray(array $_item)
+    {
+        return new Secteur($_item[0], $_item[1]);
+    }
+
+    public static function buildFromData(int $_id, string $_nom)
+    {
+        return new Secteur($_id, $_nom);
+    }
 
     public function getId(): int
     {
@@ -25,12 +35,12 @@ class Secteur
 
     public function getVarchar(): string
     {
-        return $this->_varchar;
+        return $this->_nom;
     }
 
-    public function setVarchar(string $varchar): void
+    public function setVarchar(string $nom): void
     {
-        $this->_varchar = $varchar;
+        $this->_nom = $nom;
     }
 
 
