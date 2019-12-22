@@ -107,7 +107,7 @@ function afficher_secteurs():void
 
 }
 
-function inserer_nouveaux_secteurs(string $libelle):void
+function inserer_nouveau_secteur(string $libelle):void
 {
 
     $secteurs = getAllSecteurs();
@@ -126,7 +126,7 @@ function inserer_nouveaux_secteurs(string $libelle):void
     }
 }
 
-function inserer_nouvelles_structures(string $nom, string $rue, string $cp, string $ville, string $structure, string $nbDonAct, $checkbox_list):void
+function inserer_nouvelle_structure(string $nom, string $rue, string $cp, string $ville, string $structure, string $nbDonAct, $checkbox_list):void
 {
     if ($checkbox_list) {
 
@@ -188,8 +188,13 @@ function supprimer_secteur(int $id)
 
     //Tant qu'on a pas parcouru toutes les structures et qu'on a pas trouvé
     while ($i < sizeof($secteurs) && !$secteurPresent && !$secteurUtilise) {
-        $secteurUtilise = $linkSecteurStructure[$i][2] == $id;
+        $j = 0;
+        while ($j < sizeof($linkSecteurStructure) && !$secteurUtilise){
+            $secteurUtilise = $linkSecteurStructure[$j][2] == $id;
+            $j++;
+        }
         $secteurPresent = $secteurs[$i]->getId() == $id;
+
         $i++;
     }
 

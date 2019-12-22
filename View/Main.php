@@ -18,7 +18,7 @@ if (isset($_POST['submit'], $_POST['nomStructure'], $_POST['rue'], $_POST['cp'],
     $_SESSION['nbDonaAct'] = $_POST['nbDonaAct'];
     $_SESSION['check_list'] = $_POST['check_list'];
 
-    inserer_nouvelles_structures($_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct'], $_POST['check_list']);
+    inserer_nouvelle_structure($_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct'], $_POST['check_list']);
 }
 
 if (isset($_POST['modifier'])) {
@@ -36,7 +36,7 @@ if (isset($_POST['modifierSecteur'], $_POST['idSecteurAModifier'])) {
 if (isset($_POST['ajouterSecteur'], $_POST['nomSecteur'])) {
     $_SESSION['nomSecteur'] = $_POST['nomSecteur'];
 
-    inserer_nouveaux_secteurs($_POST['nomSecteur']);
+    inserer_nouveau_secteur($_POST['nomSecteur']);
 }
 
 if (isset($_POST['idSuppression'])) {
@@ -84,7 +84,7 @@ if (isset($_POST['idSecteurAModifier'])) {
 <body>
 
 <div class="wrapper">
-    <nav id="sidebar1">
+    <nav id="sidebar1" <?php if (isset($_POST['idModifier'])){echo 'class="active"';} ?>>
         <div id="dismiss1">
             <i class="fas fa-arrow-left"></i>
         </div>
@@ -225,7 +225,7 @@ if (isset($_POST['idSecteurAModifier'])) {
         </div>
     </div>
 
-    <nav id="sidebar2">
+    <nav id="sidebar2" <?php if (isset($_POST['idSecteurAModifier'])){echo 'class="active"';} ?>>
         <div id="dismiss2">
             <i class="fas fa-arrow-left"></i>
         </div>
@@ -251,11 +251,15 @@ if (isset($_POST['idSecteurAModifier'])) {
 
             <?php afficher_secteurs(); ?>
 
+            <form id="formClear" method="post">
+                <input class="btn btn-info" type="submit" name="clear" value="Clear">
+            </form>
+
         </form>
     </nav>
 </div>
 
-<div class="overlay"></div>
+<div class="overlay <?php if (isset($_POST['idModifier']) || isset($_POST['idSecteurAModifier'])){echo 'active';} ?>"></div>
 
 <script src="../src/js/jquery-3.4.1.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
