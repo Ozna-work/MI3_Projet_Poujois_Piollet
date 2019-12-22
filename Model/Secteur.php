@@ -33,12 +33,12 @@ class Secteur
         $this->_id = $id;
     }
 
-    public function getVarchar(): string
+    public function getNom(): string
     {
         return $this->_nom;
     }
 
-    public function setVarchar(string $nom): void
+    public function setNom(string $nom): void
     {
         $this->_nom = $nom;
     }

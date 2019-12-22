@@ -35,7 +35,8 @@ function getAllStructures(): array
                     array_push($structures, Entreprise::buildFromArray($item));     //Sinon création d'une entreprise
                 }
             }
-            return $structuresBd;  //TODO retourner l'array d'objets
+            //return $structuresBd;  //TODO retourner l'array d'objets
+            return $structures;
         }
     } catch (PDOException $e) {
         echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
@@ -89,7 +90,8 @@ function getStructureById($id)
                 $structure = Entreprise::buildFromArray($structureDb[0]);
             }
 
-            return $structureDb;   //TODO Retourner l'objet
+            //return $structureDb;   //TODO Retourner l'objet
+            return $structure;
         }
 
     } catch (PDOException $e) {
@@ -113,9 +115,10 @@ function getAllSecteurs(): array
             $lines = $stmt->fetchAll();
             $secteurs = [];
             foreach ($lines as $item){
-                array_push($secteurs,$item);
+                array_push($secteurs,Secteur::buildFromArray($item));
             }
-            return $lines;  //TODO retourner l'array d'objet
+            //return $lines;  //TODO retourner l'array d'objet
+            return $secteurs;
         }
     } catch (PDOException $e) {
         echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
@@ -160,7 +163,7 @@ function getSecteurLibelleById($id)
         $res = $stmt->execute();
 
         if ($res) {
-            return $stmt->fetchAll();
+            return $stmt->fetchAll()[0][0]; //[0] = premier élément de l'array de libelle, [0][0] = Valeur du premier (et seul) élément
         }
 
     } catch (PDOException $e) {
@@ -172,24 +175,24 @@ function getSecteurLibelleById($id)
 }
 
 //Insère une nouvelle structure et retourne son id
-function insertStructure(string $nom, string $rue, string $cp, string $ville, int $estasso, int $nb_donAct)
+function insertStructure(Structure $structure):int
 {
     try {
         $conn = getConnexion();
         $stmt_structure = $conn->prepare("INSERT INTO Structure(nom, rue, cp, ville, estasso, nb_donateurs, nb_actionnaires) VALUES (:nom,:rue,:cp,:ville,:estasso,:don,:act)");
-        $stmt_structure->bindValue("nom", $nom, PDO::PARAM_STR);
-        $stmt_structure->bindValue("rue", $rue, PDO::PARAM_STR);
-        $stmt_structure->bindValue("cp", $cp, PDO::PARAM_STR);
-        $stmt_structure->bindValue("ville", $ville, PDO::PARAM_STR);
-        $stmt_structure->bindValue("estasso", $estasso, PDO::PARAM_INT);
+        $stmt_structure->bindValue("nom", $structure->getNom(), PDO::PARAM_STR);
+        $stmt_structure->bindValue("rue", $structure->getRue(), PDO::PARAM_STR);
+        $stmt_structure->bindValue("cp", $structure->getCp(), PDO::PARAM_STR);
+        $stmt_structure->bindValue("ville", $structure->getVille(), PDO::PARAM_STR);
+        $stmt_structure->bindValue("estasso", $structure->estAsso(), PDO::PARAM_INT);
 
         //Si c'est une association
-        if ($estasso == 1) {
-            $stmt_structure->bindValue("don", $nb_donAct, PDO::PARAM_INT);
+        if ($structure->estAsso() == 1) {
+            $stmt_structure->bindValue("don", $structure->getNbContributeurs(), PDO::PARAM_INT);
             $stmt_structure->bindValue("act", NULL, PDO::PARAM_NULL);
         } else {
             $stmt_structure->bindValue("don", NULL, PDO::PARAM_NULL);
-            $stmt_structure->bindValue("act", $nb_donAct, PDO::PARAM_INT);
+            $stmt_structure->bindValue("act", $structure->getNbContributeurs(), PDO::PARAM_INT);
         }
 
         $stmt_structure->execute();
@@ -300,28 +303,28 @@ function deleteStructure(int $id)
     }
 }
 
-//Met à jour les informations d'une structure (selon son id), et retourne son id
-function updateStructure(int $id, string $nom, string $rue, string $cp, string $ville, int $estasso, int $nb_donAct)
+//Met à jour les informations d'une structure (selon son id)
+function updateStructure(Structure $structure)
 {
     try {
         $conn = getConnexion();
         $stmt_structure = $conn->prepare("UPDATE Structure 
                                                     SET NOM = :nom, RUE = :rue, CP = :cp, VILLE = :ville, ESTASSO = :estasso, NB_DONATEURS = :don, NB_ACTIONNAIRES = :act 
                                                     WHERE id = :id");
-        $stmt_structure->bindValue("id", $id, PDO::PARAM_INT);
-        $stmt_structure->bindValue("nom", $nom, PDO::PARAM_STR);
-        $stmt_structure->bindValue("rue", $rue, PDO::PARAM_STR);
-        $stmt_structure->bindValue("cp", $cp, PDO::PARAM_STR);
-        $stmt_structure->bindValue("ville", $ville, PDO::PARAM_STR);
-        $stmt_structure->bindValue("estasso", $estasso, PDO::PARAM_INT);
+        $stmt_structure->bindValue("id", $structure->getId(), PDO::PARAM_INT);
+        $stmt_structure->bindValue("nom", $structure->getNom(), PDO::PARAM_STR);
+        $stmt_structure->bindValue("rue", $structure->getRue(), PDO::PARAM_STR);
+        $stmt_structure->bindValue("cp", $structure->getCp(), PDO::PARAM_STR);
+        $stmt_structure->bindValue("ville", $structure->getVille(), PDO::PARAM_STR);
+        $stmt_structure->bindValue("estasso", $structure->estAsso(), PDO::PARAM_INT);
 
         //Si c'est une association
-        if ($estasso == 1) {
-            $stmt_structure->bindValue("don", $nb_donAct, PDO::PARAM_INT);
+        if ($structure->estAsso() == 1) {
+            $stmt_structure->bindValue("don", $structure->getNbContributeurs(), PDO::PARAM_INT);
             $stmt_structure->bindValue("act", NULL, PDO::PARAM_NULL);
         } else {
             $stmt_structure->bindValue("don", NULL, PDO::PARAM_NULL);
-            $stmt_structure->bindValue("act", $nb_donAct, PDO::PARAM_INT);
+            $stmt_structure->bindValue("act", $structure->getNbContributeurs(), PDO::PARAM_INT);
         }
 
         $stmt_structure->execute();
@@ -331,19 +334,17 @@ function updateStructure(int $id, string $nom, string $rue, string $cp, string $
     } finally {
         // fermeture de la connexion
         $conn = null;
-
-        return $id;
     }
 }
 
-//Met à jour un secteur en se basant sur son id, et retourne son id
-function updateSecteur(int $id, string $nom)
+//Met à jour un secteur en se basant sur son id
+function updateSecteur(Secteur $secteur)
 {
     try {
         $conn = getConnexion();
         $stmt_secteur = $conn->prepare("UPDATE Secteur SET LIBELLE = :nom WHERE id = :id");
-        $stmt_secteur->bindValue("nom", $nom, PDO::PARAM_STR);
-        $stmt_secteur->bindValue("id", $id, PDO::PARAM_INT);
+        $stmt_secteur->bindValue("nom", $secteur->getNom(), PDO::PARAM_STR);
+        $stmt_secteur->bindValue("id", $secteur->getId(), PDO::PARAM_INT);
 
         $stmt_secteur->execute();
 
@@ -352,8 +353,6 @@ function updateSecteur(int $id, string $nom)
     } finally {
         // fermeture de la connexion
         $conn = null;
-
-        return $id;
     }
 }
 

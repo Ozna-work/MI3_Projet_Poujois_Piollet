@@ -5,7 +5,6 @@ class Association extends Structure
 {
     private $_nbDonnateurs;
 
-
     private function __construct(int $_id, string $_nom, string $_rue, string $_cp, string $_ville, int $_nbDonnateurs)
     {
         parent::__construct($_id, $_nom, $_rue, $_cp, $_ville);
@@ -24,12 +23,12 @@ class Association extends Structure
     }
 
 
-    public function getNbDonnateurs(): int
+    public function getNbContributeurs(): int
     {
         return $this->_nbDonnateurs;
     }
 
-    public function setNbDonnateurs(int $nbDonnateurs): void
+    public function setNbContributeurs(int $nbDonnateurs): void
     {
         $this->_nbDonnateurs = $nbDonnateurs;
     }

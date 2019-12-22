@@ -45,7 +45,7 @@ if (isset($_POST['idSuppression'])) {
 
 if (isset($_POST['idModifier'])) {
     $time = time() + 3600;
-    $structAModifier = recuperer_structure_par_id($_POST['idModifier'])[0];
+    $structAModifier = recuperer_structure_par_id($_POST['idModifier']);
     $secteursAModifier = recuperer_idSecteurs_par_idStructure($_POST['idModifier']);
 }
 
@@ -99,8 +99,8 @@ if (isset($_POST['idSecteurAModifier'])) {
                 <label for="nomStructure">Nom:</label>
                 <input required id="nomStructure" name="nomStructure" type="text" maxlength="100"
                        value="<?php
-                       if (isset($structAModifier[1])) {
-                           echo htmlspecialchars($structAModifier[1]);
+                       if (isset($structAModifier)) {
+                           echo htmlspecialchars($structAModifier->getNom());
                        } else if (isset($_SESSION['nomStructure'])) {
                            echo htmlspecialchars($_SESSION['nomStructure']);
                        } ?>"/>
@@ -111,8 +111,8 @@ if (isset($_POST['idSecteurAModifier'])) {
                 <label for="rue">Rue:</label>
                 <input required id="rue" name="rue" type="text" maxlength="200"
                        value="<?php
-                       if (isset($structAModifier[2])) {
-                           echo htmlspecialchars($structAModifier[2]);
+                       if (isset($structAModifier)) {
+                           echo htmlspecialchars($structAModifier->getRue());
                        } else if (isset($_SESSION['rue'])) {
                            echo htmlspecialchars($_SESSION['rue']);
                        } ?>"/>
@@ -123,8 +123,8 @@ if (isset($_POST['idSecteurAModifier'])) {
                 <label for="cp">Code postal:</label>
                 <input required id="cp" name="cp" type="number" maxlength="5"
                        value="<?php
-                       if (isset($structAModifier[3])) {
-                           echo htmlspecialchars($structAModifier[3]);
+                       if (isset($structAModifier)) {
+                           echo htmlspecialchars($structAModifier->getCp());
                        } else if (isset($_SESSION['cp'])) {
                            echo htmlspecialchars($_SESSION['cp']);
                        } ?>"/>
@@ -135,8 +135,8 @@ if (isset($_POST['idSecteurAModifier'])) {
                 <label for="ville">Ville:</label>
                 <input required id="ville" name="ville" type="text" maxlength="100"
                        value="<?php
-                       if (isset($structAModifier[4])) {
-                           echo htmlspecialchars($structAModifier[4]);
+                       if (isset($structAModifier)) {
+                           echo htmlspecialchars($structAModifier->getVille());
                        } else if (isset($_SESSION['ville'])) {
                            echo htmlspecialchars($_SESSION['ville']);
                        } ?>"/>
@@ -147,14 +147,14 @@ if (isset($_POST['idSecteurAModifier'])) {
                 <label for="structure">Type de structure:</label>
                 <select name="structure" size="1" id="structure">
                     <option value="association" <?php
-                    if (isset($structAModifier[5]) && $structAModifier[5] == 1) {
+                    if (isset($structAModifier) && $structAModifier->estAsso() == 1) {
                         echo "selected";
                     } else if (isset($_SESSION['structure']) && $_SESSION['structure'] == "association") {
                         echo "selected";
                     } ?>
                     ">Association
                     <option value="entreprise" <?php
-                    if (isset($structAModifier[5]) && $structAModifier[5] == 0) {
+                    if (isset($structAModifier) && $structAModifier->estAsso() == 0) {
                         echo "selected";
                     } else if (isset($_SESSION['structure']) && $_SESSION['structure'] == "entreprise") {
                         echo "selected";
@@ -165,8 +165,8 @@ if (isset($_POST['idSecteurAModifier'])) {
 
             <label for="nbDonaAct">Nombre de donnateurs/actionnaires:</label></br>
             <input required id="nbDonaAct" name="nbDonaAct" type="number" maxlength="11"
-                   value="<?php if (isset($structAModifier[6]) || isset($structAModifier[7])) {
-                       echo htmlspecialchars($structAModifier[6] + $structAModifier[7]);
+                   value="<?php if (isset($structAModifier)) {
+                       echo htmlspecialchars($structAModifier->getNbContributeurs());
                    } else if (isset($_SESSION['nbDonaAct'])) {
                        echo htmlspecialchars($_SESSION['nbDonaAct']);
                    } ?>"/>

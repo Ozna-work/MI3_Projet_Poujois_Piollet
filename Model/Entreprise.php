@@ -24,12 +24,12 @@ class Entreprise extends Structure
     }
 
 
-    public function getNbActionnaires(): int
+    public function getNbContributeurs(): int
     {
         return $this->_nbActionnaires;
     }
 
-    public function setNbActionnaires(int $nbActionnaires): void
+    public function setNbContributeurs(int $nbActionnaires): void
     {
         $this->_nbActionnaires = $nbActionnaires;
     }

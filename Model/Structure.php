@@ -73,6 +73,19 @@ abstract class Structure
         $this->_ville = $ville;
     }
 
-    public abstract  function estAsso():int;
+    public function isEqual(Structure $struct):bool
+    {
+        return ($this->getNom() == $struct->getNom()
+            && $this->getRue() == $struct->getRue()
+            && $this->getCp() == $struct->getCp()
+            && $this->getVille() == $struct->getVille()
+            && $this->getNbContributeurs() == $struct->getNbContributeurs()
+            && $this->estAsso() == $struct->estAsso()
+        );
+    }
+
+    public abstract function getNbContributeurs(): int;
+    public abstract function setNbContributeurs(int $nbContributeurs): void;
+    public abstract function estAsso():int;
 
 }

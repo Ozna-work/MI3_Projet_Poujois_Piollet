@@ -3,9 +3,10 @@
 require_once("../Model/Structure.php");
 require_once("../Model/Association.php");
 require_once("../Model/Entreprise.php");
+require_once ("../Model/Secteur.php");
 require_once('../Model/db/PDO.php');
 
-function afficher_structures()
+function afficher_structures():void
 {
     $structures = getAllStructures();
     echo "<table class=\"table table-hover\" id='listeStructures'>";
@@ -26,41 +27,46 @@ function afficher_structures()
         echo "<tr>";
 
         //Si ESTASSO vaut 0, alors c'est une entreprise
-        if ($structure[5] == 0) {
+        if ($structure->estAsso() == 0) {
             echo "<td> Entreprise</td>";
         } else {
             echo "<td> Association</td>";
         }
 
         //Infos générique pour chaque structure
-        for ($i = 1; $i < 5; $i++) {
-            echo "<td>" . $structure[$i] . "</td>";
-        }
+//        for ($i = 1; $i < 5; $i++) {
+//            echo "<td>" . $structure[$i] . "</td>";
+//        }
+        echo "<td>" . $structure->getNom() . "</td>";
+        echo "<td>" . $structure->getRue() . "</td>";
+        echo "<td>" . $structure->getCp() . "</td>";
+        echo "<td>" . $structure->getVille() . "</td>";
+        echo "<td>" . $structure->getNbContributeurs() . "</td>";
 
         //Si le nombre de donateurs n'est pas null, on affiche ce nombre, sinon on affiche le nombre d'actionnaires
-        if ($structure[6]) {
-            echo "<td>" . $structure[6] . "</td>";
-        } else {
-            echo "<td>" . $structure[7] . "</td>";
-        }
+//        if ($structure[6]) {
+//            echo "<td>" . $structure[6] . "</td>";
+//        } else {
+//            echo "<td>" . $structure[7] . "</td>";
+//        }
 
         //Affichage des secteurs
         echo "<td>";
-        $idSecteurs = getSecteursIdByStructureId($structure[0]);
+        $idSecteurs = getSecteursIdByStructureId($structure->getId());
         foreach ($idSecteurs as $idSecteur) {
-            $libelleSecteur = getSecteurLibelleById($idSecteur[0])[0][0];
+            $libelleSecteur = getSecteurLibelleById($idSecteur[0]);
             echo $libelleSecteur . '<br>';
         }
 
         echo "</td>";
 
         echo '<td><form method="post" action="">';
-        echo "<input hidden name='idModifier' value='" . $structure[0] . "'/>";
+        echo "<input hidden name='idModifier' value='" . $structure->getId() . "'/>";
         echo '<input class="btn btn-secondary" type="submit" value="Modifier"/>';
         echo '</form> </td>';
 
         echo '<td><form method="post" action="">';
-        echo "<input hidden name='idSuppression' value='" . $structure[0] . "'/>";
+        echo "<input hidden name='idSuppression' value='" . $structure->getId() . "'/>";
         echo '<input  class="btn btn-danger" type="submit" value="Supprimer"/>';
         echo '</form> </td>';
 
@@ -71,7 +77,7 @@ function afficher_structures()
     echo "</table>";
 }
 
-function afficher_secteurs()
+function afficher_secteurs():void
 {
     $secteurs = getAllSecteurs();
 
@@ -89,9 +95,9 @@ function afficher_secteurs()
 //        echo "<input class='modifieSecteur' name='idSecteurAModifier' type='submit' value='" . $secteur[0] . "'/>";
 //        echo "<input class='deleteSecteur' name='idSecteurSupprime' type='submit' value='" . $secteur[0] . "'/>";
         echo "<tr>";
-        echo "<td>" . $secteur[1] . "</td>";
-        echo "<td> <input class='modifieSecteur' name='idSecteurAModifier' type='submit' value='" . $secteur[0] . "'/>";
-        echo "<td> <input class='deleteSecteur' name='idSecteurSupprime' type='submit' value='" . $secteur[0] . "'/>";
+        echo "<td>" . $secteur->getNom() . "</td>";
+        echo "<td> <input class='modifieSecteur' name='idSecteurAModifier' type='submit' value='" . $secteur->getId() . "'/>";
+        echo "<td> <input class='deleteSecteur' name='idSecteurSupprime' type='submit' value='" . $secteur->getId() . "'/>";
         echo "</tr>";
         echo '</div>';
 
@@ -101,7 +107,7 @@ function afficher_secteurs()
 
 }
 
-function inserer_nouveaux_secteurs(string $libelle)
+function inserer_nouveaux_secteurs(string $libelle):void
 {
 
     $secteurs = getAllSecteurs();
@@ -111,7 +117,7 @@ function inserer_nouveaux_secteurs(string $libelle)
     //Tant qu'on a pas parcouru tous les secteurs ET que le secteur n'est pas présent
     while ($i < sizeof($secteurs) && !$secteurPresent) {
         //Prends la valeur true si le resultat est différent du libelle cherché
-        $secteurPresent = ($secteurs[$i][1] == $libelle);
+        $secteurPresent = ($secteurs[$i]->getNom() == $libelle);
         $i++;
     }
 
@@ -120,29 +126,31 @@ function inserer_nouveaux_secteurs(string $libelle)
     }
 }
 
-function inserer_nouvelles_structures(string $nom, string $rue, string $cp, string $ville, string $structure, string $nbDonAct, $checkbox_list)
+function inserer_nouvelles_structures(string $nom, string $rue, string $cp, string $ville, string $structure, string $nbDonAct, $checkbox_list):void
 {
     if ($checkbox_list) {
-        $i = 0;
+
         $structures = getAllStructures();
         $structurePresent = false;
 
         if ($structure == "Association") {
-            $estAsso = 1;
-            $typeContributeur = 6;  //Permet de savoir sur quel indice comparer les donnateurs/actionnaires
+//            $estAsso = 1;
+//            $typeContributeur = 6;  //Permet de savoir sur quel indice comparer les donnateurs/actionnaires
+            $nouvelleStructure = Association::buildFromData(-1,$nom,$rue,$cp,$ville,$nbDonAct);
         } else {
-            $estAsso = 0;
-            $typeContributeur = 7;  //Permet de savoir sur quel indice comparer les donnateurs/actionnaires
+//            $estAsso = 0;
+//            $typeContributeur = 7;  //Permet de savoir sur quel indice comparer les donnateurs/actionnaires
+            $nouvelleStructure = Entreprise::buildFromData(-1,$nom,$rue,$cp,$ville,$nbDonAct);
         }
 
+        $i = 0;
         while ($i < sizeof($structures) && !$structurePresent) {
-            $item = $structures[$i];
-            $structurePresent = ($item[1] == $nom && $item[2] == $rue && $item[3] == $cp && $item[4] == $ville && $item[5] == $estAsso && $item[$typeContributeur] == $nbDonAct);
+            $structurePresent = $nouvelleStructure->isEqual($structures[$i]);
             $i++;
         }
 
         if (!$structurePresent) {
-            $idStructure = insertStructure($nom, $rue, $cp, $ville, $estAsso, $nbDonAct);
+            $idStructure = insertStructure($nouvelleStructure);
 
             //$checkbox est un string
             foreach ($checkbox_list as $checkbox) {
@@ -161,7 +169,7 @@ function supprimer_structure(int $id)
 
     //Tant qu'on a pas parcouru toutes les structures et qu'on a pas trouvé
     while ($i < sizeof($structures) && !$structurePresent) {
-        $structurePresent = $structures[$i][0] == $id;
+        $structurePresent = $structures[$i]->getId() == $id;
         $i++;
     }
 
@@ -181,7 +189,7 @@ function supprimer_secteur(int $id)
     //Tant qu'on a pas parcouru toutes les structures et qu'on a pas trouvé
     while ($i < sizeof($secteurs) && !$secteurPresent && !$secteurUtilise) {
         $secteurUtilise = $linkSecteurStructure[$i][2] == $id;
-        $secteurPresent = $secteurs[$i][0] == $id;
+        $secteurPresent = $secteurs[$i]->getId() == $id;
         $i++;
     }
 
@@ -195,7 +203,7 @@ function afficher_checkbox_secteurs($checklist)
     $secteurs = getAllSecteurs();
 
     for ($i = 0; $i < sizeof($secteurs); $i++) {
-        $id = $secteurs[$i][0];
+        $id = $secteurs[$i]->getId();
         echo " <div class=\"form-check\">";
 //        echo '<li> <input type="checkbox" id="' . $id . '" name="check_list[]" value="' . $id . '"';
 //        if (!is_null($checklist) && in_array($id, $checklist)) {
@@ -209,7 +217,7 @@ function afficher_checkbox_secteurs($checklist)
         if (!is_null($checklist) && in_array($id, $checklist)) {
             echo ' checked="checked" ';
         }
-        echo '>' . $secteurs[$i][1];
+        echo '>' . $secteurs[$i]->getNom();
         '</label>';
         echo "</li>";
         echo "</div>";
@@ -223,11 +231,11 @@ function recuperer_structure_par_id(int $id)
 
 function recuperer_idSecteurs_par_idStructure(int $id)
 {
-    $secteurs = getSecteursIdByStructureId($id);
+    $idSecteurs = getSecteursIdByStructureId($id);
     $res = [];
 
-    for ($i = 0; $i < sizeof($secteurs); $i++) {
-        $res[$i] = $secteurs[$i][0];
+    for ($i = 0; $i < sizeof($idSecteurs); $i++) {
+        $res[$i] = $idSecteurs[$i][0];
     }
 
     return $res;
@@ -235,7 +243,7 @@ function recuperer_idSecteurs_par_idStructure(int $id)
 
 function recuperer_libelle_secteur_par_id(int $id)
 {
-    return getSecteurLibelleById($id)[0][0];
+    return getSecteurLibelleById($id);
 }
 
 function modifier_structure(int $id, string $nom, string $rue, string $cp, string $ville, string $structure, string $nbDonAct, $checkbox_list)
@@ -246,27 +254,29 @@ function modifier_structure(int $id, string $nom, string $rue, string $cp, strin
         $structurePresent = false;
 
         if ($structure == "Association") {
-            $estAsso = 1;
-            $typeContributeur = 6;  //Permet de savoir sur quel indice comparer les donnateurs/actionnaires
+//            $estAsso = 1;
+//            $typeContributeur = 6;  //Permet de savoir sur quel indice comparer les donnateurs/actionnaires
+            $structAModifier = Association::buildFromData($id, $nom, $rue, $cp, $ville,$nbDonAct);
         } else {
-            $estAsso = 0;
-            $typeContributeur = 7;  //Permet de savoir sur quel indice comparer les donnateurs/actionnaires
+//            $estAsso = 0;
+//            $typeContributeur = 7;  //Permet de savoir sur quel indice comparer les donnateurs/actionnaires
+            $structAModifier = Entreprise::buildFromData($id, $nom, $rue, $cp, $ville,$nbDonAct);
         }
 
         while ($i < sizeof($structures) && !$structurePresent) {
             $item = $structures[$i];
 
             //Vaut faux si différent
-            $structurePresent = ($item[1] == $nom && $item[2] == $rue && $item[3] == $cp && $item[4] == $ville && $item[5] == $estAsso && $item[$typeContributeur] == $nbDonAct);
+            $structurePresent = $structAModifier->isEqual($item);
 
             //Si c'est présent il faut vérifier si les associations sont les mêmes
             if ($structurePresent) {
                 $anciensSecteurs = getSecteursIdByStructureId($id);
-                $ind = 0;
+                $j = 0;
                 $resFinalAnciensSecteurs = [];
-                while ($ind < sizeof($anciensSecteurs)) {
-                    $resFinalAnciensSecteurs[$ind] = $anciensSecteurs[$ind][0];
-                    $ind++;
+                while ($j < sizeof($anciensSecteurs)) {
+                    $resFinalAnciensSecteurs[$j] = $anciensSecteurs[$j][0];
+                    $j++;
                 }
 
                 $structurePresent = empty(array_diff($resFinalAnciensSecteurs, $checkbox_list));
@@ -277,11 +287,11 @@ function modifier_structure(int $id, string $nom, string $rue, string $cp, strin
         }
 
         if (!$structurePresent) {
-            $idStructure = updateStructure($id, $nom, $rue, $cp, $ville, $estAsso, $nbDonAct);
+            updateStructure($structAModifier);
             deleteAllLinkByIdStructure($id);
             //$checkbox est un string
             foreach ($checkbox_list as $checkbox) {
-                insertLinkSecteursStructure((int)$idStructure, (int)$checkbox);
+                insertLinkSecteursStructure($id, (int)$checkbox);
             }
         }
     }
@@ -289,7 +299,7 @@ function modifier_structure(int $id, string $nom, string $rue, string $cp, strin
 
 function modifier_secteur(int $id, string $nom)
 {
-    updateSecteur($id, $nom);
+    updateSecteur(Secteur::buildFromData($id, $nom));
 }
 
 ?>
