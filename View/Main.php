@@ -4,11 +4,13 @@ include_once('../Controller/Main.php');
 
 session_start();
 
+//Si l'utilisateur à cliqué sur "clear"
 if (isset($_POST['clear'])) {
-    $_POST = null;
-    session_unset();
+    $_POST = null;  //Réinitialisation des données de $_POST
+    session_unset();    //Suppression des données de la session
 }
 
+//Si le formulaire d'ajout d'ajout d'une structure est rempli
 if (isset($_POST['submit'], $_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct'], $_POST['check_list'])) {
     $_SESSION['nomStructure'] = $_POST['nomStructure'];
     $_SESSION['rue'] = $_POST['rue'];
@@ -21,38 +23,46 @@ if (isset($_POST['submit'], $_POST['nomStructure'], $_POST['rue'], $_POST['cp'],
     inserer_nouvelle_structure($_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct'], $_POST['check_list']);
 }
 
+//Si l'utilisateur modifie une structure
 if (isset($_POST['modifier'])) {
     modifier_structure((int)$_POST['idModifier'], $_POST['nomStructure'], $_POST['rue'], $_POST['cp'], $_POST['ville'], $_POST['structure'], $_POST['nbDonaAct'], $_POST['check_list']);
+    //On supprime les données pour sortir du mode modification
     session_unset();
     $_POST = null;
 }
 
+//Si l'utilisateur modifie un secteur
 if (isset($_POST['modifierSecteur'], $_POST['idSecteurAModifier'])) {
     modifier_secteur((int)$_POST['idSecteurAModifier'], $_POST['nomSecteur']);
+    //On supprime les données pour sortir du mode modification
     session_unset();
     $_POST = null;
 }
 
+//Ajout d'un secteur si le formulaire est rempli
 if (isset($_POST['ajouterSecteur'], $_POST['nomSecteur'])) {
     $_SESSION['nomSecteur'] = $_POST['nomSecteur'];
 
     inserer_nouveau_secteur($_POST['nomSecteur']);
 }
 
+//Suppression d'une structure (l'attribut value du bouton supprimer correspond à l'id de la structure)
 if (isset($_POST['idSuppression'])) {
     supprimer_structure($_POST['idSuppression']);
 }
 
+//Après avoir cliquer sur le bouton modifier d'une structure, on récupère ses informations pour les afficher
 if (isset($_POST['idModifier'])) {
-    $time = time() + 3600;
     $structAModifier = recuperer_structure_par_id($_POST['idModifier']);
     $secteursAModifier = recuperer_idSecteurs_par_idStructure($_POST['idModifier']);
 }
 
+//Suppression d'un secteur (l'attribut value du bouton supprimer correspond à l'id du secteur)
 if (isset($_POST['idSecteurSupprime'])) {
     supprimer_secteur($_POST['idSecteurSupprime']);
 }
 
+//Si l'utilisateur modifie un secteur, on récupère ses informations (nom) pour l'afficher dans le champ texte
 if (isset($_POST['idSecteurAModifier'])) {
     $_SESSION['nomSecteur'] = recuperer_libelle_secteur_par_id((int)$_POST['idSecteurAModifier']);
 }
@@ -82,6 +92,8 @@ if (isset($_POST['idSecteurAModifier'])) {
 </head>
 
 <body>
+
+<!-- MENU DE MODIFICATION DES STRUCTURES -->
 
 <div class="wrapper">
     <nav id="sidebar1" <?php if (isset($_POST['idModifier'])){echo 'class="active"';} ?>>
@@ -190,8 +202,9 @@ if (isset($_POST['idSecteurAModifier'])) {
             <input class="btn btn-info" type="submit" name="clear" value="Clear">
         </form>
     </nav>
+    <!-- FIN DU MENU DE MODIFICATION DES STRUCTURES -->
 
-    <!-- Page Content  -->
+    <!-- PAGE PRINCIPALE, ICONES DES MENUS ET TABLEAU DES STRUCTURES  -->
     <div id="content">
 
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -219,12 +232,13 @@ if (isset($_POST['idSecteurAModifier'])) {
 
             </div>
         </nav>
-
+        <!-- FIN DE LA PAGE PRINCIPALE -->
         <div id="divTable">
             <?php afficher_structures(); ?>
         </div>
     </div>
 
+    <!-- MENU DE MODIFICATION DES SECTEURS -->
     <nav id="sidebar2" <?php if (isset($_POST['idSecteurAModifier'])){echo 'class="active"';} ?>>
         <div id="dismiss2">
             <i class="fas fa-arrow-left"></i>
@@ -257,6 +271,7 @@ if (isset($_POST['idSecteurAModifier'])) {
 
         </form>
     </nav>
+    <!--FIN DU MENU DE MODIFICATION DES SECTEURS-->
 </div>
 
 <div class="overlay <?php if (isset($_POST['idModifier']) || isset($_POST['idSecteurAModifier'])){echo 'active';} ?>"></div>

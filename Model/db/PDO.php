@@ -35,7 +35,6 @@ function getAllStructures(): array
                     array_push($structures, Entreprise::buildFromArray($item));     //Sinon création d'une entreprise
                 }
             }
-            //return $structuresBd;  //TODO retourner l'array d'objets
             return $structures;
         }
     } catch (PDOException $e) {
@@ -85,12 +84,11 @@ function getStructureById($id)
             $structureDb = $stmt->fetchAll();
             if ($structureDb[0][5] == 1)    //Si estAsso = 1
             {
-                $structure = Association::buildFromArray($structureDb[0]);
+                $structure = Association::buildFromArray($structureDb[0]);  //Création d'un objet Association
             }else{
-                $structure = Entreprise::buildFromArray($structureDb[0]);
+                $structure = Entreprise::buildFromArray($structureDb[0]);   //Création d'un objet Entreprise
             }
 
-            //return $structureDb;   //TODO Retourner l'objet
             return $structure;
         }
 
@@ -115,9 +113,9 @@ function getAllSecteurs(): array
             $lines = $stmt->fetchAll();
             $secteurs = [];
             foreach ($lines as $item){
-                array_push($secteurs,Secteur::buildFromArray($item));
+                array_push($secteurs,Secteur::buildFromArray($item));   //Création d'objets secteurs et ajout dans la liste
             }
-            //return $lines;  //TODO retourner l'array d'objet
+
             return $secteurs;
         }
     } catch (PDOException $e) {
@@ -131,8 +129,7 @@ function getAllSecteurs(): array
 }
 
 //Recupère les Id des secteurs associés à une structure donnée
-//TODO Retourner des objets secteur plutot que des id ? voir comment la fonction est utilisée, peut améliorer la lisibilité si pas d'avantages pratiques
-function getSecteursIdByStructureId($id)
+function getSecteursIdByStructureId($id):array
 {
     try {
         $conn = getConnexion();
@@ -141,7 +138,7 @@ function getSecteursIdByStructureId($id)
         $res = $stmt->execute();
 
         if ($res) {
-            return $stmt->fetchAll();
+            return $stmt->fetchAll();   //Retour de la liste d'id
         }
 
     } catch (PDOException $e) {
@@ -153,8 +150,7 @@ function getSecteursIdByStructureId($id)
 }
 
 //Retourne le libellé d'un secteur d'id donné
-//TODO Retourner un objet secteur plutot que le nom ? voir comment la fonction est utilisée, peut améliorer la lisibilité si pas d'avantages pratiques
-function getSecteurLibelleById($id)
+function getSecteurLibelleById($id):string
 {
     try {
         $conn = getConnexion();
@@ -163,6 +159,7 @@ function getSecteurLibelleById($id)
         $res = $stmt->execute();
 
         if ($res) {
+            //Retour du nom du secteur
             return $stmt->fetchAll()[0][0]; //[0] = premier élément de l'array de libelle, [0][0] = Valeur du premier (et seul) élément
         }
 
@@ -190,7 +187,7 @@ function insertStructure(Structure $structure):int
         if ($structure->estAsso() == 1) {
             $stmt_structure->bindValue("don", $structure->getNbContributeurs(), PDO::PARAM_INT);
             $stmt_structure->bindValue("act", NULL, PDO::PARAM_NULL);
-        } else {
+        } else {    //Si c'est une entreprise
             $stmt_structure->bindValue("don", NULL, PDO::PARAM_NULL);
             $stmt_structure->bindValue("act", $structure->getNbContributeurs(), PDO::PARAM_INT);
         }
@@ -200,7 +197,7 @@ function insertStructure(Structure $structure):int
     } catch (PDOException $e) {
         echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
     } finally {
-        $id = $conn->lastInsertId();
+        $id = $conn->lastInsertId();    //Recupération de l'id de la structure venant d'être insérée
         // fermeture de la connexion
         $conn = null;
 
@@ -209,7 +206,7 @@ function insertStructure(Structure $structure):int
 }
 
 //Insère un lien entre une structure et le secteur correspondant
-function insertLinkSecteursStructure(int $idStructure, int $idSecteur)
+function insertLinkSecteursStructure(int $idStructure, int $idSecteur):void
 {
     try {
         $conn = getConnexion();
@@ -218,7 +215,7 @@ function insertLinkSecteursStructure(int $idStructure, int $idSecteur)
         $stmt_link->bindValue("idStructure", $idStructure, PDO::PARAM_INT);
         $stmt_link->bindValue("idSecteur", $idSecteur, PDO::PARAM_INT);
 
-        $stmt_link->execute();
+        $stmt_link->execute();  //Crée un lien entre la structure et un (de ses) secteur(s)
 
     } catch (PDOException $e) {
         echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
@@ -228,28 +225,8 @@ function insertLinkSecteursStructure(int $idStructure, int $idSecteur)
     }
 }
 
-//function updateLinkSecteursStructures(int $idStructure, int $idSecteur)
-//{
-//    try {
-//        $conn = getConnexion();
-//
-//        $stmt_delete = $conn->prepare("DELETE FROM Secteurs_Structures WHERE ID_STRUCTURE = :idStructure");
-//        $stmt_delete->bindValue("idStructure", $idStructure, PDO::PARAM_INT);
-//        $stmt_delete->execute();
-//
-//        insertLinkSecteursStructure($idStructure,$idSecteur);
-//
-//
-//    } catch (PDOException $e) {
-//        echo "Error " . $e->getCode() . " : " . $e->getMessage() . "<br/>" . $e->getTraceAsString();
-//    } finally {
-//        // fermeture de la connexion
-//        $conn = null;
-//    }
-//}
-
 //Insère un nouveau secteur en base de données
-function insertSecteur(string $libelle)
+function insertSecteur(string $libelle):void
 {
     try {
         $conn = getConnexion();
@@ -266,7 +243,7 @@ function insertSecteur(string $libelle)
 }
 
 //Supprime tous les liens d'une structure à ses secteurs
-function deleteAllLinkByIdStructure(int $id)
+function deleteAllLinkByIdStructure(int $id):void
 {
     try {
         $conn = getConnexion();
@@ -284,7 +261,7 @@ function deleteAllLinkByIdStructure(int $id)
 }
 
 //Supprime une structure (et les liens à ses secteurs)
-function deleteStructure(int $id)
+function deleteStructure(int $id):void
 {
     try {
         $conn = getConnexion();
@@ -304,7 +281,7 @@ function deleteStructure(int $id)
 }
 
 //Met à jour les informations d'une structure (selon son id)
-function updateStructure(Structure $structure)
+function updateStructure(Structure $structure):void
 {
     try {
         $conn = getConnexion();
@@ -338,7 +315,7 @@ function updateStructure(Structure $structure)
 }
 
 //Met à jour un secteur en se basant sur son id
-function updateSecteur(Secteur $secteur)
+function updateSecteur(Secteur $secteur):void
 {
     try {
         $conn = getConnexion();
@@ -357,7 +334,7 @@ function updateSecteur(Secteur $secteur)
 }
 
 //Supprime un secteur selon son id
-function deleteSecteur(int $id)
+function deleteSecteur(int $id):void
 {
     try {
         $conn = getConnexion();
